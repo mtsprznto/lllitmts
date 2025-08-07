@@ -1,0 +1,41 @@
+<nav
+  class="fixed border-b border-white/30 top-0 left-0 w-full bg-black/50 backdrop-blur-md z-[9999]"
+>
+  <div class="flex justify-between">
+    <span class="ml-2">
+      <h1 class="font-bold tracking-tighter">LLLIT</h1>
+    </span>
+    <div class="flex justify-end tracking-tighter z-9999">
+      <button
+        id="go_to_about"
+        class="z-9999 cursor-pointer h-full hover:bg-white/30 px-2"
+      >
+        About this
+      </button>
+      <button
+        id="go_to_video"
+        class="z-9999 cursor-pointer h-full hover:bg-white/30 px-2"
+      >
+        Videos
+      </button>
+      <button
+        id="go_to_price"
+        class="z-9999 cursor-pointer h-full hover:bg-white/30 px-2 bg-white/20"
+      >
+        Precios
+      </button>
+    </div>
+  </div>
+</nav>
+
+<script>
+  import { gsap } from "gsap";
+
+  gsap.from("nav button", {
+    y: 60,
+    opacity: 0,
+    duration: 0.8,
+    ease: "power2.out",
+    stagger: 0.2, // animación en cascada
+  });
+</script>

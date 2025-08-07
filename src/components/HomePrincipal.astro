@@ -1,0 +1,86 @@
+---
+import EmailIcon from "@/assets/svg_icon/mail.svg";
+const { HeroKeyBackground, LET } = Astro.props;
+---
+
+
+<section id="section1" class="h-screen relative w-full">
+  <picture id="hero-key" class="h-screen scale-125 block overflow-hidden fixed">
+    <img
+      id="hero-key-logo"
+      src={LET.src}
+      class="absolute object-contain top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-1/8 w-[20rem]"
+    />
+    <img
+      id="hero-key-background"
+      src={HeroKeyBackground.src}
+      class="w-full h-full object-cover opacity-12 z-0"
+    />
+  </picture>
+  <div class="w-full h-full flex justify-center items-center">
+    <div class="mt-100 z-9999">
+      <span
+        class="flex w-20 h-20 cursor-pointer z-9999"
+        id="copy-email"
+        title="Copiar correo"
+      >
+        <EmailIcon class="w-full h-full pointer-events-auto opacity-40" />
+      </span>
+    </div>
+  </div>
+</section>
+<script>
+  import { gsap } from "gsap";
+  import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+  gsap.registerPlugin(ScrollToPlugin);
+
+  gsap.from("#hero-key-logo", {
+    duration: 1,
+    x: -300,
+    ease: "power3.out",
+  });
+  gsap.from("#copy-email", {
+    x: 300,
+    duration: 1,
+    ease: "power3.out",
+  });
+
+  //FUNCTION SCROOL SMOTH
+  function scrollToSection(selector, duration = 1.2, easing = "power2.out") {
+    gsap.to(window, {
+      duration,
+      scrollTo: selector,
+      ease: easing,
+    });
+  }
+  document.getElementById("go_to_about").addEventListener("click", () => {
+    scrollToSection("#section2");
+  });
+  document.getElementById("go_to_video").addEventListener("click", () => {
+    scrollToSection("#section3");
+  });
+  document.getElementById("go_to_price").addEventListener("click", () => {
+    scrollToSection("#section4");
+  });
+
+  // COPIAR AL HACER CLICK CON EL ICON EMAIL
+  document.addEventListener("DOMContentLoaded", () => {
+    const emailElement = document.getElementById("copy-email");
+    if (emailElement) {
+      emailElement.addEventListener("click", () => {
+        const email = "ejemplo@correo.com";
+        navigator.clipboard
+          .writeText(email)
+          .then(() => {
+            console.log("Correo copiado:", email);
+            // Opcional: feedback visual
+            emailElement.classList.add("scale-110");
+            setTimeout(() => emailElement.classList.remove("scale-110"), 300);
+          })
+          .catch((err) => {
+            console.error("Error al copiar:", err);
+          });
+      });
+    }
+  });
+</script>

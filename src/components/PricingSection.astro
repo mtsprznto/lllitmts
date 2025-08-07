@@ -1,0 +1,141 @@
+---
+// src/components/PricingSection.astro
+import CardDetalles from "./PricingComponts/CardDetalles.astro";
+import FormIcono from "@/assets/svg_icon/form.svg";
+import IGIcono from "@/assets/svg_icon/ig.svg";
+import MailIcono from "@/assets/svg_icon/mail.svg";
+---
+
+<section id="section4" class="min-h-screen w-full bg-[#111111] text-white">
+  <main class="p-6 h-full">
+    <div>
+      <h1 class="text-[1rem] md:text-[3rem] font-bold">PRECIOS</h1>
+    </div>
+
+    <div class="w-full h-full grid grid-cols-1 md:grid-cols-2 gap-6 mt-1">
+      <!-- SIN PROYECTOR -->
+      <div class="w-full z-9999">
+        <h2
+          class="text-[2rem] md:text-[4rem] mb-0 font-semibold tracking-tight"
+          id="sin_proyector"
+        >
+          SIN PROYECTOR
+        </h2>
+        <CardDetalles
+          title="Mapping Accesible Normal"
+          detalle="Mapping en estructuras predeterminadas, No live VJ."
+          hardware="Dell, 8Gb Ram, Radeon Graphics AMD, No GPU"
+          proyector="No incluye proyector"
+          precio="$70.000"
+        />
+        <CardDetalles
+          title="Mapping Accesible Medium"
+          detalle="Mapping en estructuras predeterminadas, Live VJ."
+          hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
+          proyector="No incluye proyector"
+          precio="$100.000"
+        />
+      </div>
+
+      <!-- CON PROYECTOR -->
+      <div class="w-full z-9999 ">
+        <h2
+          class="text-[2rem] md:text-[4rem] mb-0 font-semibold tracking-tight"
+          id="con_proyector"
+        >
+          CON PROYECTOR
+        </h2>
+
+        <CardDetalles
+          title="Mapping Accesible Normal + Proyector"
+          detalle="Mapping en estructuras predeterminadas, No live VJ."
+          hardware="Dell, 8Gb Ram, Radeon Graphics AMD, No GPU"
+          proyector="Proyector 4200 Lúmenes"
+          precio="$120.000"
+        />
+
+        <CardDetalles
+          title="Mapping Accesible v2 + Proyector"
+          detalle="Mapping en estructuras predeterminadas, Live VJ."
+          hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
+          proyector="Proyector 3200 Lúmenes"
+          precio="$140.000"
+        />
+        <CardDetalles
+          title="Accesible Medium + Proyector"
+          detalle="Mapping en estructuras predeterminadas, Live VJ."
+          hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
+          proyector="Proyector 4200 Lúmenes"
+          precio="$160.000"
+        />
+      </div>
+    </div>
+  </main>
+  <div class="flex flex-col h-full w-full align-end justify-end items-end">
+    <div
+      class="relative w-full align-end justify-end border-t border-b p-3 items-end"
+    >
+      <p class="">Todos los precios NO incluyen transporte.</p>
+      <p>
+        Para reserva depositar el 40% del precio total mínimo 2 semanas antes.
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER? -->
+  <footer class="border-t p-6">
+    <div class="w-full flex justify-between h-full z-9999">
+      <button
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+      >
+        <a href="/formulario" target="_blank" rel="noopener noreferrer"
+          ><FormIcono class="w-15 h-15" />
+        </a>
+      </button>
+      <button
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+        ><IGIcono class="w-15 h-15" />
+      </button>
+      <button
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+        ><MailIcono class="w-15 h-15" />
+      </button>
+    </div>
+  </footer>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import SplitType from "split-type";
+  const sin_proyector = new SplitType("#sin_proyector", {
+    types: "words,chars",
+  });
+  const con_proyector = new SplitType("#con_proyector", {
+    types: "words,chars",
+  });
+
+  sin_proyector.chars.forEach((char, index) => {
+    let chatsT2 = gsap.timeline();
+
+    char.addEventListener("mouseenter", () => {
+      gsap.to(char, {
+        color: `rgb(${gsap.utils.random(0, 255)},${gsap.utils.random(
+          0,
+          255
+        )},${gsap.utils.random(0, 255)})`,
+      });
+    });
+  });
+  con_proyector.chars.forEach((char, index) => {
+    let chatsT2 = gsap.timeline();
+
+    char.addEventListener("mouseenter", () => {
+      gsap.to(char, {
+        color: `rgb(${gsap.utils.random(0, 255)},${gsap.utils.random(
+          0,
+          255
+        )},${gsap.utils.random(0, 255)})`,
+      });
+    });
+  });
+</script>

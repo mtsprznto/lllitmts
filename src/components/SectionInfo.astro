@@ -1,0 +1,90 @@
+---
+const { LET } = Astro.props;
+---
+
+<!-- Secion 2 -->
+<section id="section2" class="h-screen relative w-full">
+  <header class="flex justify-between w-full" id="header_let_logo">
+    <img
+      src={LET.src}
+      alt="Logo"
+      class="w-33 h-33 md:w-30 md:h-30 opacity-0 object-contain"
+      id="logo_header"
+    />
+  </header>
+  <main class="relative w-full h-full overflow-hidden opacity-0" id="section2">
+    <div class="flex flex-col w-full h-full mt-0 p-0">
+      <p class="text-[1.5rem] tracking-wide mb-2" id="parrafo">
+        LLL es un proyecto de visuales en vivo que busca crear una experiencia
+        inmersiva y única a través de la combinación de música, tecnología y
+        arte visual.
+      </p>
+      <div class="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 w-full h-full">
+        <video
+          src="/src/assets/videos/dem1.mp4"
+          muted
+          autoplay
+          playsinline
+          preload="auto"
+          class="object-cover w-full rounded-lg shadow-md"
+          loop></video>
+        <video
+          src="/src/assets/videos/dem2.mp4"
+          muted
+          autoplay
+          playsinline
+          preload="auto"
+          class="object-cover w-full rounded-lg shadow-md"
+          loop></video>
+        <video
+          src="/src/assets/videos/dem3.mp4"
+          muted
+          autoplay
+          playsinline
+          preload="auto"
+          class="object-cover w-full rounded-lg shadow-md"
+          loop></video>
+      </div>
+    </div>
+  </main>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import SplitType from "split-type";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.from("#logo_header", { x: 100, duration: 1 });
+
+  const parrafo = new SplitType("#parrafo", { types: "words,chars" });
+
+  parrafo.chars.forEach((char, index) => {
+    let charsT1 = gsap.timeline();
+
+    charsT1.from(char, {
+      y: gsap.utils.random(-150, 150),
+      x: gsap.utils.random(-300, 300),
+      opacity: 0,
+      ease: "back.out",
+      rotate: gsap.utils.random(-360, 360),
+      scale: gsap.utils.random(0, 2),
+      
+      duration: 1,
+      stagger: 0.02,
+      scrollTrigger: {
+        trigger: "#parrafo",
+        start: "top 80%", // cuando el párrafo entra al 80% del viewport
+        toggleActions: "play none none reverse",
+      },
+      delay: index * 0.02,
+    });
+    charsT1.from(char, {
+      color: `rgb(${gsap.utils.random(0, 255)},${gsap.utils.random(
+        0,
+        255
+      )},${gsap.utils.random(0, 255)})`,
+    });
+  });
+</script>

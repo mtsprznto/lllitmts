@@ -1,0 +1,19 @@
+---
+const { title, detalle, hardware, proyector, precio } = Astro.props;
+---
+
+<div class="border-l border-t p-3">
+  <h3 class="text-[1.5rem] font-semibold">{title}</h3>
+  <ul class="mt-1 text-[1rem] list-none">
+    <li><span>Detalles: </span>{detalle}</li>
+    <li><span>Hardware: </span>{hardware}</li>
+    <li><span>Proyector: </span>{proyector}</li>
+    <li><span>Precio: </span>{precio}</li>
+  </ul>
+</div>
+
+<style>
+  li > span {
+    color: aqua;
+  }
+</style>
