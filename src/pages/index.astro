@@ -6,14 +6,18 @@ import PricingSection from "@/components/PricingSection.astro";
 import VideoDemo from "@/components/VideoDemo.astro";
 import SectionInfo from "@/components/SectionInfo.astro";
 import HomePrincipal from "@/components/HomePrincipal.astro";
+import Footer from "@/components/Footer.astro";
 import LET from "@/assets/let.png";
+import HeaderHome from "@/components/HeaderHome.astro";
 ---
 
 <Layout>
+  <HeaderHome />
   <HomePrincipal HeroKeyBackground={HeroKeyBackground} LET={LET} />
   <SectionInfo LET={LET} />
   <VideoDemo />
   <PricingSection />
+  <Footer />
 </Layout>
 
 <script>
@@ -52,8 +56,6 @@ import LET from "@/assets/let.png";
       },
       0.4
     );
-
-  
 
   // Fade in de la sección 2
   gsap.to("#section2", {

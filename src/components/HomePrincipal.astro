@@ -3,7 +3,6 @@ import EmailIcon from "@/assets/svg_icon/mail.svg";
 const { HeroKeyBackground, LET } = Astro.props;
 ---
 
-
 <section id="section1" class="h-screen relative w-full">
   <picture id="hero-key" class="h-screen scale-125 block overflow-hidden fixed">
     <img
@@ -18,7 +17,7 @@ const { HeroKeyBackground, LET } = Astro.props;
     />
   </picture>
   <div class="w-full h-full flex justify-center items-center">
-    <div class="mt-100 z-9999">
+    <div class="mt-100 z-9999 flex flex-col items-center">
       <span
         class="flex w-20 h-20 cursor-pointer z-9999"
         id="copy-email"
@@ -26,6 +25,7 @@ const { HeroKeyBackground, LET } = Astro.props;
       >
         <EmailIcon class="w-full h-full pointer-events-auto opacity-40" />
       </span>
+      <p class="mt-3 border-b text-white/30">lit.io30303@gmail.com</p>
     </div>
   </div>
 </section>
@@ -46,7 +46,7 @@ const { HeroKeyBackground, LET } = Astro.props;
   });
 
   //FUNCTION SCROOL SMOTH
-  function scrollToSection(selector, duration = 1.2, easing = "power2.out") {
+  function scrollToSection(selector: any, duration = 1.2, easing = "power2.out") {
     gsap.to(window, {
       duration,
       scrollTo: selector,
