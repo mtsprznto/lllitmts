@@ -2,9 +2,18 @@
 import Layout from "@/layouts/Layout.astro";
 import PricingSection from "@/components/PricingSection.astro";
 import HeaderShared from "@/components/HeaderShared.astro";
+import Footer from "@/components/Footer.astro";
 ---
 
 <Layout>
   <HeaderShared />
   <PricingSection />
+  <Footer />
 </Layout>
+
+<style>
+  html,
+  body {
+    height: 100vh;
+  }
+</style>
