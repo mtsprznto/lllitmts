@@ -12,7 +12,14 @@ import HeaderHome from "@/components/HeaderHome.astro";
 ---
 
 <Layout>
-  <HeaderHome />
+  <HeaderHome
+    title_button_about="About this"
+    button_id_about="go_to_about"
+    title_button_videos="Videos"
+    button_id_videos="go_to_videos"
+    title_button_price="Precios"
+    button_id_price="go_to_price"
+  />
   <HomePrincipal HeroKeyBackground={HeroKeyBackground} LET={LET} />
   <SectionInfo LET={LET} />
   <VideoDemo />

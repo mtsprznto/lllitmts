@@ -1,6 +1,18 @@
 ---
 // Puedes agregar lógica aquí si lo necesitás
+import HeaderShared from "@/components/HeaderShared.astro";
 import Layout from "@/layouts/Layout.astro";
+import FormularioComponets from "@/components/FormularioComponents/FormularioComponets.astro";
 ---
 
-<Layout>en desarrollo...</Layout>
+<Layout>
+  <HeaderShared />
+  <FormularioComponets />
+</Layout>
+
+<style>
+  html,
+  body {
+    height: 100vh;
+  }
+</style>

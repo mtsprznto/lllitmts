@@ -1,12 +1,5 @@
 ---
-const {
-  title_button_about,
-  button_id_about,
-  title_button_videos,
-  button_id_videos,
-  title_button_price,
-  button_id_price,
-} = Astro.props;
+
 ---
 
 <nav
@@ -19,25 +12,13 @@ const {
       </a>
     </span>
     <div class="flex justify-end tracking-tighter z-9999">
-      <button
-        id={button_id_about}
-        
+      <a
+        id="contacto"
         class="z-9999 cursor-pointer h-full hover:bg-white/30 px-2"
+        href="/formulario"
       >
-        {title_button_about}
-      </button>
-      <button
-        id={button_id_videos}
-        class="z-9999 cursor-pointer h-full hover:bg-white/30 px-2"
-      >
-        {title_button_videos}
-      </button>
-      <button
-        id={button_id_price}
-        class="z-9999 cursor-pointer h-full hover:bg-white/30 px-2 bg-white/20"
-      >
-        {title_button_price}
-      </button>
+        Contacto
+      </a>
     </div>
   </div>
 </nav>

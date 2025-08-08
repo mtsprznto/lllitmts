@@ -1,0 +1,102 @@
+<main
+  class="w-full h-screen bg-gradient-to-br from-[#0f0f0f] to-[#1a1a1a] text-white"
+>
+  <div class="flex flex-col items-center justify-center h-full w-full">
+    <div
+      class="backdrop-blur-md p-8 shadow-2xl w-full border-t border-b flex flex-col items-center justify-center"
+    >
+      <div class="w-full md:w-[50%]">
+        <h1 class="text-4xl font-semibold mb-2 text-center">Contacto</h1>
+        <form
+          method="POST"
+          action="/api/contact"
+          class="space-y-4"
+          autocomplete="off"
+        >
+          <div>
+            <label for="name" class="block text-sm mb-1">Nombre</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              minlength="2"
+              class="w-full px-4 py-2 bg-[#1f1f1f] border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            />
+          </div>
+          <div>
+            <label for="email" class="block text-sm mb-1"
+              >Correo electrónico</label
+            >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="w-full px-4 py-2 bg-[#1f1f1f] border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            />
+          </div>
+          <div>
+            <label for="message" class="block text-sm mb-1">Mensaje</label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              rows="4"
+              class="w-full px-4 py-2 bg-[#1f1f1f] border border-white/20 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="w-full py-2 bg-pink-600 hover:bg-pink-700 transition-colors rounded-md font-semibold"
+          >
+            Enviar
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+  const form = document.querySelector("form");
+  
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    
+    const name = formData.get("name")?.trim();
+    const email = formData.get("email")?.trim();
+    const message = formData.get("message")?.trim();
+    if (
+      !name ||
+      name.length < 2 ||
+      !email.includes("@") ||
+      !message ||
+      message.length < 5
+    ) {
+      alert("❌ Por favor completá todos los campos correctamente.");
+      return;
+    }
+
+    const payload = { name, email, message };
+
+  
+
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      alert("✅ ¡Mensaje enviado correctamente!");
+      form.reset();
+    } else {
+      alert("❌ Hubo un error al enviar el mensaje.");
+    }
+  });
+</script>
