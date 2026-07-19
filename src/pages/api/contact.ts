@@ -25,14 +25,27 @@ export async function POST({ request }: APIContext) {
       );
     }
 
-    const data = await resend.emails.send({
-      from: "no-reply@mtsprz.org", // debe estar verificado en Resend
-      to: "matiaspereznauto@gmail.com", // destinatario (vos mismo)
+    const html = `<p><strong>Nombre:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Mensaje:</strong><br/>${message}</p>`
+
+    await resend.emails.send({
+      from: "LLLIT <no-reply@mtsprz.org>",
+      to: "contacto@mtsprz.org",
       subject: `Nuevo mensaje de ${name}`,
-      html: `<p><strong>Nombre:</strong> ${name}</p>
-             <p><strong>Email:</strong> ${email}</p>
-             <p><strong>Mensaje:</strong><br/>${message}</p>`,
-    });
+      html,
+    })
+
+    await resend.emails.send({
+      from: "LLLIT <no-reply@mtsprz.org>",
+      to: email,
+      subject: "Copia de tu mensaje — LLLIT",
+      html: `<p>Hola ${name},</p>
+        <p>Recibimos tu mensaje. Te respondemos a la brevedad.</p>
+        ${html}
+        <hr style="border: none; border-top: 1px solid #333; margin: 24px 0;" />
+        <p style="font-size: 12px; color: #999;">LLLIT · contacto@mtsprz.org</p>`,
+    })
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (error) {
