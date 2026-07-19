@@ -25,3 +25,8 @@ pnpm-debug.log*
 
 
 src/assets/videos/*
+public/videos/album/*
+.codebase-memory/*
+AGENTS.md
+.opencode/*
+.vercel/*

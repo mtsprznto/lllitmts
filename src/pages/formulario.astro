@@ -5,10 +5,34 @@ import Layout from "@/layouts/Layout.astro";
 import FormularioComponets from "@/components/FormularioComponents/FormularioComponets.astro";
 ---
 
-<Layout>
+<Layout
+  title="LLLIT — Contacto | Booking mapping visual y música"
+  description="Contactate con LLLIT para booking de mapping visual en vivo, música, eventos y colaboraciones."
+  ogTitle="LLLIT — Contacto"
+  ogDescription="Contactate con LLLIT para booking de mapping visual en vivo."
+  canonicalUrl="https://lllitmts.vercel.app/formulario"
+>
   <HeaderShared />
-  <FormularioComponets />
+  <main>
+    <h1 class="sr-only text-white text-2xl">LLLIT — Contacto y booking para mapping visual, VJ y música</h1>
+    <FormularioComponets />
+  </main>
 </Layout>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "@id": "https://lllitmts.vercel.app/formulario#contact",
+  "url": "https://lllitmts.vercel.app/formulario",
+  "name": "LLLIT — Contacto y Booking",
+  "description": "Contactate con LLLIT para booking de mapping visual en vivo, música, eventos y colaboraciones.",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "LLLIT (Matias)",
+    "email": "lllit@mtsprz.org",
+    "url": "https://lllitmts.vercel.app"
+  }
+})} />
 
 <style>
   html,

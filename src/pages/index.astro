@@ -6,12 +6,15 @@ import PricingSection from "@/components/PricingSection.astro";
 import VideoDemo from "@/components/VideoDemo.astro";
 import SectionInfo from "@/components/SectionInfo.astro";
 import HomePrincipal from "@/components/HomePrincipal.astro";
+import AlbumPromo from "@/components/AlbumPromo.astro";
 import Footer from "@/components/Footer.astro";
 import LET from "@/assets/let.png";
 import HeaderHome from "@/components/HeaderHome.astro";
 ---
 
-<Layout>
+<Layout
+  canonicalUrl="https://lllitmts.vercel.app/"
+>
   <HeaderHome
     title_button_about="About this"
     button_id_about="go_to_about"
@@ -19,13 +22,91 @@ import HeaderHome from "@/components/HeaderHome.astro";
     button_id_videos="go_to_videos"
     title_button_price="Precios"
     button_id_price="go_to_price"
+    title_button_album="Álbum"
+    button_id_album="go_to_album"
   />
   <HomePrincipal HeroKeyBackground={HeroKeyBackground} LET={LET} />
   <SectionInfo LET={LET} />
   <VideoDemo />
   <PricingSection />
+  <AlbumPromo />
+  <section class="bg-[#111] text-white px-5 sm:px-8 py-20 max-w-3xl mx-auto" data-content-visibility>
+    <h2 class="text-xl sm:text-2xl font-bold tracking-tighter mb-8 text-center">
+      LLLIT — Preguntas frecuentes
+    </h2>
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-1.5">¿Quién es LLLIT?</h3>
+        <p class="text-sm text-white/50 leading-relaxed">LLLIT es un proyecto de música electrónica y visuales en vivo de Chile. Minimal dub, ambient psicodélico y experimental.</p>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-1.5">¿Qué es Inesperado contratiempo?</h3>
+        <p class="text-sm text-white/50 leading-relaxed">Es el nuevo álbum de LLLIT (2026) con 5 tracks que exploran minimal dub, ambient psicodélico y experimental. Out Sept 4 en Bandcamp.</p>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-1.5">¿Ofrece LLLIT servicios de mapping?</h3>
+        <p class="text-sm text-white/50 leading-relaxed">Sí, mapping visual en vivo con TouchDesigner, con o sin proyector. Ideal para eventos, fiestas y presentaciones. Consultá precios en /prices.</p>
+      </div>
+    </div>
+  </section>
   <Footer />
 </Layout>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "VideoObject",
+      "name": "LLLIT — Demo Mapping Visual TouchDesigner",
+      "description": "Demostraciones de mapping visual en vivo producidas con TouchDesigner por LLLIT.",
+      "thumbnailUrl": "https://lllitmts.vercel.app/images/album/cover-small.webp",
+      "contentUrl": "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2ao5NjdlBxwDBNugMZPXJEvp0y4TAnQUIaYjmt",
+      "uploadDate": "2026-07-19",
+      "genre": ["TouchDesigner", "Visual Mapping", "Generative Art"],
+    },
+    {
+      "@type": "Service",
+      "name": "Mapping Visual en Vivo",
+      "description": "Servicio de mapping visual en vivo con TouchDesigner. Mapping en estructuras predeterminadas con y sin proyector. Live VJ disponible.",
+      "provider": { "@id": "https://lllitmts.vercel.app/#artist" },
+      "offers": {
+        "@type": "Offer",
+        "price": "70000",
+        "priceCurrency": "ARS",
+        "description": "Desde $70.000 ARS (sin proyector)",
+      },
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Quién es LLLIT?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "LLLIT es un proyecto de música electrónica y visuales en vivo de Chile. Minimal dub, ambient psicodélico y experimental."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué es Inesperado contratiempo?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Es el nuevo álbum de LLLIT (2026) con 5 tracks que exploran minimal dub, ambient psicodélico y experimental. Out Sept 4 en Bandcamp."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Ofrece LLLIT servicios de mapping?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, mapping visual en vivo con TouchDesigner, con o sin proyector. Ideal para eventos, fiestas y presentaciones."
+          }
+        }
+      ]
+    },
+  ],
+})} />
 
 <script>
   import { gsap } from "gsap";
@@ -44,7 +125,7 @@ import HeaderHome from "@/components/HeaderHome.astro";
     },
   });
 
-  tl.to("#hero-key", { duration: 1, scale: 1 })
+  tl.from("#hero-key", { duration: 1, scale: 1.25 })
     .to("#hero-key-logo", { opacity: 0 }, "<")
     .to("#logo_header", { opacity: 1 }, "< 0.5")
     .to(

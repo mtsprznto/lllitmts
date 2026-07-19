@@ -1,0 +1,224 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import HeaderShared from "@/components/HeaderShared.astro"
+import Footer from "@/components/Footer.astro"
+import { albums } from "@/data/albums"
+
+const SITE_URL = "https://lllitmts.vercel.app"
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${SITE_URL}/album#collection`,
+      "name": "Discografía de LLLIT",
+      "description": "Todos los álbumes y lanzamientos de LLLIT — minimal dub, psychedelic ambient y electrónica experimental.",
+      "url": `${SITE_URL}/album`,
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": albums.map((a, i) => ({
+          "@type": "ListItem",
+          "position": i + 1,
+          "item": {
+            "@type": "MusicAlbum",
+            "name": a.title,
+            "url": `${SITE_URL}/album/${a.slug}`,
+            "image": `${SITE_URL}${a.coverUrl}`,
+            "byArtist": { "@id": `${SITE_URL}/#artist` },
+            "datePublished": a.releaseDate,
+            "genre": a.genres,
+          },
+        })),
+      },
+    },
+  ],
+}
+---
+
+<Layout
+  title="LLLIT — Discografía completa (minimal dub, ambient, experimental)"
+  description="Explorá todos los álbumes de LLLIT. Minimal dub, psychedelic ambient y electrónica experimental. Incluye 'Inesperado contratiempo' (2026) y próximos lanzamientos."
+  ogTitle="LLLIT — Discografía"
+  ogDescription="Todos los álbumes de LLLIT en una estantería de vinilos. Descubrí minimal dub, ambient experimental y más."
+  canonicalUrl={`${SITE_URL}/album`}
+  breadcrumbs={[
+    { name: "LLLIT", url: "/" },
+    { name: "Discografía", url: "/album" },
+  ]}
+  structuredData={structuredData}
+>
+  <HeaderShared />
+
+  <main class="min-h-screen bg-[#111] text-white">
+    <div class="absolute inset-0 bg-gradient-to-b from-white/[0.02] via-transparent to-transparent pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 pt-28 pb-24">
+      <header class="mb-16 md:mb-20 text-center">
+        <p class="text-[10px] tracking-[0.25em] uppercase text-white/30 mb-4 font-medium">
+          Catálogo
+        </p>
+        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tighter mb-4">
+          Discografía
+        </h1>
+        <p class="text-sm text-white/40 max-w-md mx-auto leading-relaxed">
+          {albums.length} {albums.length === 1 ? "lanzamiento" : "lanzamientos"} · Minimal dub, ambient psicodélico y experimental
+        </p>
+      </header>
+
+      <div id="album-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
+        {albums.map((album, i) => (
+          <a
+            href={`/album/${album.slug}`}
+            class="group block vinyl-card"
+          >
+            <div class="relative w-full mb-5 vinyl-wrapper" style="aspect-ratio: 1 / 1;">
+              <div class="absolute inset-[3%] rounded-full vinyl-disc
+                bg-gradient-to-br from-zinc-800 via-zinc-900 to-black shadow-2xl
+                ring-1 ring-white/[0.04]">
+                <div class="absolute inset-0 rounded-full vinyl-grooves"></div>
+                <div class="absolute inset-[26%] rounded-full overflow-hidden ring-2 ring-white/[0.08] shadow-xl">
+                  <picture>
+                    <source srcset={album.coverUrl.replace(/\.png$/, ".webp").replace(/\.jpg$/, ".webp")} type="image/webp" />
+                    <img
+                      src={album.coverUrl}
+                      alt={`${album.title} — Álbum de ${album.artist}`}
+                      class="w-full h-full object-cover"
+                      loading={i === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  </picture>
+                </div>
+                <div class="absolute inset-[47%] rounded-full bg-black/70 ring-1 ring-white/[0.04]"></div>
+              </div>
+
+              <div class="absolute inset-0 z-10 vinyl-sleeve
+                rounded-sm shadow-2xl overflow-hidden
+                ring-1 ring-white/[0.06]">
+                <picture>
+                  <source srcset={album.coverUrl.replace(/\.png$/, ".webp").replace(/\.jpg$/, ".webp")} type="image/webp" />
+                  <img
+                    src={album.coverUrl}
+                    alt={`${album.title} — Álbum de ${album.artist}`}
+                    class="w-full h-full object-cover"
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    fetchpriority={i === 0 ? "high" : undefined}
+                  />
+                </picture>
+                <div class="absolute inset-y-0 right-0 w-[2px] bg-white/[0.08]"></div>
+                <div class="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]"></div>
+              </div>
+            </div>
+
+            <div class="text-center space-y-1.5">
+              <p class="text-[10px] tracking-[0.2em] uppercase text-white/30 font-medium">
+                {album.artist}
+              </p>
+              <h2 class="text-lg sm:text-xl font-bold tracking-tight leading-tight group-hover:text-white/80 transition-colors">
+                {album.title}
+              </h2>
+              <div class="flex items-center justify-center gap-2 text-[11px] text-white/30">
+                <span>{album.releaseDate.split("-")[0]}</span>
+                <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                <span class="uppercase tracking-[0.08em]">{album.genres[0]}</span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {albums.length === 0 && (
+        <div class="text-center py-32">
+          <p class="text-white/30 text-sm tracking-[0.1em] uppercase">Próximamente</p>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .vinyl-card {
+    position: relative;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .vinyl-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .vinyl-disc {
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .vinyl-wrapper {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .vinyl-grooves {
+    background: repeating-radial-gradient(
+      circle at center,
+      transparent 0,
+      transparent 3px,
+      rgba(255,255,255,0.012) 3px,
+      rgba(255,255,255,0.012) 4px
+    );
+  }
+
+  .vinyl-sleeve {
+    transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1),
+      box-shadow 0.55s cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: left center;
+    will-change: transform;
+  }
+
+  @media (hover: hover) {
+    .vinyl-card:hover .vinyl-sleeve {
+      transform: translateX(-20%);
+      box-shadow: 8px 4px 24px rgba(0,0,0,0.5),
+        inset -2px 0 6px rgba(0,0,0,0.3);
+    }
+    .vinyl-card:hover .vinyl-disc {
+      transform: rotate(-6deg);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .vinyl-wrapper {
+      max-width: 220px;
+    }
+    .vinyl-disc {
+      inset: 8%;
+      transform: translateX(35%);
+    }
+    .vinyl-sleeve {
+      transform: none;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .vinyl-card .text-lg {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap"
+  import { ScrollTrigger } from "gsap/ScrollTrigger"
+  gsap.registerPlugin(ScrollTrigger)
+
+  gsap.from(".vinyl-card", {
+    y: 80,
+    opacity: 0,
+    rotation: -5,
+    duration: 0.7,
+    stagger: 0.1,
+    ease: "power3.out",
+    scrollTrigger: {
+      trigger: "#album-grid",
+      start: "top 85%",
+      toggleActions: "play none none none",
+    },
+  })
+</script>

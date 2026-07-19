@@ -1,9 +1,93 @@
 ---
 import KeepScrolling from "@/assets/keep-scrolling.svg";
+
+interface Props {
+  hideKeepScrolling?: boolean
+  title?: string
+  description?: string
+  ogTitle?: string
+  ogDescription?: string
+  ogImage?: string
+  structuredData?: Record<string, unknown>
+  canonicalUrl?: string
+  breadcrumbs?: { name: string; url: string }[]
+}
+
+const {
+  hideKeepScrolling,
+  title = "LLLIT | Mapping visual & producción musical — Inesperado contratiempo 2026",
+  description = "LLLIT es un proyecto de visuales en vivo y música electrónica. Mapping inmersivo, TouchDesigner, y nuevo álbum 'Inesperado contratiempo' — out Sept 4, 2026.",
+  ogTitle = "LLLIT — Mapping visual & Inesperado contratiempo",
+  ogDescription = "Visuales en vivo, mapping inmersivo, y nuevo álbum de minimal dub / ambient experimental. Out Sept 4, 2026.",
+  ogImage = "https://lllitmts.vercel.app/images/album/cover-small.webp",
+  structuredData,
+  canonicalUrl = "https://lllitmts.vercel.app/",
+  breadcrumbs,
+} = Astro.props
+
+const SITE_URL = "https://lllitmts.vercel.app"
+
+const defaultStructuredData: Record<string, unknown> = {
+  "@context": "https://schema.org",
+  "@graph": [
+    breadcrumbs && breadcrumbs.length > 0
+      ? {
+          "@type": "BreadcrumbList",
+          "itemListElement": breadcrumbs.map((b, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "name": b.name,
+            "item": `${SITE_URL}${b.url}`,
+          })),
+        }
+      : null,
+    {
+      "@type": "MusicGroup",
+      "@id": `${SITE_URL}/#artist`,
+      "name": "LLLIT",
+      "url": SITE_URL,
+      "genre": ["Minimal dub", "Psychedelic ambient", "Experimental electronic"],
+      "image": "https://lllitmts.vercel.app/images/album/cover-small.webp",
+      "foundingLocation": {
+        "@type": "City",
+        "name": "Chile"
+      },
+      "sameAs": [
+        "https://lllit3.bandcamp.com",
+        "https://instagram.com/lllit_3",
+        "https://youtube.com/channel/UC6wQ3-lBuQLiYK32uUVhHcw",
+        "https://soundcloud.com/lllit_3",
+      ],
+    },
+    {
+      "@type": "Person",
+      "@id": `${SITE_URL}/#person`,
+      "name": "Matias (LLLIT)",
+      "description": "Artista de música electrónica y visuales en vivo. TouchDesigner, minimal dub, ambient.",
+      "url": SITE_URL,
+      "sameAs": [
+        "https://lllit3.bandcamp.com",
+        "https://instagram.com/lllit_3",
+        "https://youtube.com/channel/UC6wQ3-lBuQLiYK32uUVhHcw",
+        "https://soundcloud.com/lllit_3",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      "url": SITE_URL,
+      "name": "LLLIT",
+      "description": "Visuales en vivo, mapping inmersivo y música electrónica. TouchDesigner, minimal dub, ambient experimental.",
+      "publisher": { "@id": `${SITE_URL}/#artist` },
+    },
+  ].filter(Boolean),
+}
+
+const finalStructuredData = structuredData || defaultStructuredData
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -11,54 +95,97 @@ import KeepScrolling from "@/assets/keep-scrolling.svg";
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
 
-    <link rel="icon" type="image/svg+xml" href="" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <title>LLLIT | MTSPRZ</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="LLLIT, mapping, visuales en vivo, TouchDesigner, música electrónica, minimal dub, ambient, Inesperado contratiempo, proyección mapping" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalUrl} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={ogDescription} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(finalStructuredData)} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://6bq1d1k7on.ufs.sh" />
+    <link rel="preconnect" href="https://lllit3.bandcamp.com" />
+    <link rel="preconnect" href="https://instagram.com" />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@300;400;500&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <script type="speculationrules">
+      {
+        "prefetch": [{
+          "source": "list",
+          "urls": ["/", "/album", "/formulario", "/prices"]
+        }],
+        "prerender": [{
+          "source": "list",
+          "urls": ["/", "/album", "/album/inesperado-contratiempo"]
+        }]
+      }
+    </script>
   </head>
   <body>
     <slot />
-    <KeepScrolling
-      class="fixed bottom-3 right-0 left-0 mx-auto text-pink-300 drop-shadow-2xl animate-bounce-pulse"
-    />
+    {!hideKeepScrolling && (
+      <KeepScrolling
+        class="fixed bottom-3 right-0 left-0 mx-auto text-pink-300 drop-shadow-2xl animate-bounce-pulse pointer-events-none"
+      />
+    )}
     <style is:global>
       @import "tailwindcss";
 
       @theme {
         --font-sans: "Poppins", "Roboto", "sans-serif";
         --font-narrow: "GTANarrow", system-ui, sans-serif;
-
         --animate-bounce-pulse: bounce-pulse 2s ease-in-out infinite;
       }
 
       @keyframes bounce-pulse {
-        0% {
-          transform: translateY(0);
-          scale: 0.8;
-          opacity: 0.8;
-        }
-
-        50% {
-          transform: translateY(-5px);
-          opacity: 1;
-          scale: 1;
-        }
-
-        100% {
-          transform: translateY(0);
-          scale: 0.8;
-          opacity: 0.8;
-        }
+        0% { transform: translateY(0); scale: 0.8; opacity: 0.8; }
+        50% { transform: translateY(-5px); opacity: 1; scale: 1; }
+        100% { transform: translateY(0); scale: 0.8; opacity: 0.8; }
       }
 
-      html,
-      body {
+      html {
         background: #111;
-        height: 300vh;
         overflow-x: clip;
         overscroll-behavior: none;
         color: white;
+        scroll-behavior: smooth;
+      }
+
+      body {
         margin: 0;
         width: 100%;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      [data-content-visibility] {
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 500px;
       }
 
       @font-face {
@@ -91,6 +218,11 @@ import KeepScrolling from "@/assets/keep-scrolling.svg";
         font-weight: normal;
         font-style: normal;
         font-display: swap;
+      }
+
+      img, video {
+        max-width: 100%;
+        height: auto;
       }
     </style>
   </body>

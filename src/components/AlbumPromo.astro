@@ -1,0 +1,172 @@
+---
+import AudioPreview from "@/components/AudioPreview.astro"
+
+const tracks = [
+  { num: "01", name: "Desvío sin aviso", bpm: 103, pct: 63 },
+  { num: "02", name: "Deriva", bpm: 95, pct: 52 },
+  { num: "03", name: "Umbral", bpm: "99.9", pct: 58 },
+  { num: "04", name: "Fractura", bpm: 114, pct: 85 },
+  { num: "05", name: "Latencia resiDual", bpm: 113, pct: 82 },
+]
+---
+
+<section
+  id="album"
+  class="relative min-h-screen w-full bg-[#111] text-white overflow-hidden"
+>
+  <div class="absolute inset-0 opacity-[0.06]">
+    <img src="/images/album/visual-bg.webp" alt="" class="w-full h-full object-cover" aria-hidden="true" />
+  </div>
+  <div class="absolute inset-0 bg-gradient-to-b from-[#111] via-[#111]/60 to-[#111]"></div>
+  <div class="absolute inset-0 bg-gradient-to-r from-[#111]/40 via-transparent to-[#111]/40"></div>
+
+  <div class="relative z-10 flex flex-col justify-center min-h-screen px-5 sm:px-8 py-20 max-w-7xl mx-auto">
+    <span class="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-6">
+      Nuevo Lanzamiento
+    </span>
+
+    <div class="grid md:grid-cols-5 gap-10 md:gap-16 items-center">
+      <div class="md:col-span-2 fade-in-up">
+        <div class="relative">
+          <div class="absolute -inset-1 bg-white/5 rounded-2xl blur-sm"></div>
+          <div class="relative rounded-2xl overflow-hidden border border-white/10" style="aspect-ratio: 1 / 1">
+            <picture>
+              <source srcset="/images/album/cover-small.webp" type="image/webp" />
+              <img
+                src="/images/album/cover-small.png"
+                alt="Inesperado contratiempo — Álbum de LLLIT por Camila Bravo"
+                class="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-3 fade-in-up">
+        <p class="text-[11px] tracking-[0.15em] uppercase text-white/40 mb-2 font-medium">
+          LLLIT
+        </p>
+        <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter mb-4">
+          Inesperado<br />contratiempo
+        </h2>
+
+        <div class="flex flex-wrap gap-3 mb-6">
+          <span class="text-[11px] tracking-[0.12em] uppercase text-white/50 px-3 py-1.5 border border-white/10 rounded-full">
+            Bandcamp Friday
+          </span>
+          <span class="text-[11px] tracking-[0.12em] uppercase text-amber-200/70 px-3 py-1.5 border border-amber-200/20 rounded-full">
+            04 · 09 · 2026
+          </span>
+          <span class="text-[11px] tracking-[0.12em] uppercase text-white/50 px-3 py-1.5 border border-white/10 rounded-full">
+            NYP $8 USD
+          </span>
+        </div>
+
+        <p class="text-sm text-white/50 leading-relaxed max-w-lg mb-8">
+          Minimal dub, psychedelic ambient y electrónica experimental. El regreso de LLLIT tras 18 meses de silencio. Arte de tapa por Camila Bravo.
+        </p>
+
+        <div class="mb-8">
+          <h3 class="text-[10px] tracking-[0.18em] uppercase text-white/30 mb-3 pb-2 border-b border-white/[0.06]">
+            Tracklist
+          </h3>
+          <div class="space-y-1">
+            {tracks.map((t) => (
+              <div class="flex items-center gap-2 py-2 border-b border-white/[0.04] group hover:border-white/10 transition-colors">
+                {t.previewUrl ? (
+                  <AudioPreview src={t.previewUrl} trackName={t.name} />
+                ) : (
+                  <span class="w-7 shrink-0 text-[11px] text-white/30 font-mono text-center">{t.num}</span>
+                )}
+                <span class="text-sm text-white/80 group-hover:text-white transition-colors flex-1">{t.name}</span>
+                <span class="text-[11px] text-white/30 font-mono tabular-nums">{t.bpm}</span>
+                <div class="h-[2px] w-14 bg-white/5 rounded overflow-hidden shrink-0 hidden sm:block">
+                  <div class="h-full bg-white/30 rounded" style={`width: ${t.pct}%`}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mb-8 max-w-md">
+          {[
+            { role: "Música / Producción", name: "LLLIT (Matias)" },
+            { role: "Arte de tapa", name: "Camila Bravo" },
+            { role: "Voz", name: "Camila Bravo + Ignacia" },
+            { role: "Visuales", name: "LLLIT (TouchDesigner)" },
+          ].map((c) => (
+            <div class="px-3 py-2 bg-white/[0.02] border border-white/[0.06] rounded-md">
+              <p class="text-[9px] tracking-[0.12em] uppercase text-white/30 mb-0.5">{c.role}</p>
+              <p class="text-xs font-medium text-white/70">{c.name}</p>
+            </div>
+          ))}
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <a
+            href="https://lllit3.bandcamp.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 rounded-full transition-all"
+          >
+            <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+            Bandcamp
+          </a>
+          <a
+            href="https://instagram.com/lllit_3"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all"
+          >
+            @lllit_3
+          </a>
+          <a
+            href="https://youtube.com/channel/UC6wQ3-lBuQLiYK32uUVhHcw"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all"
+          >
+            YouTube
+          </a>
+          <a
+            href="https://soundcloud.com/lllit_3"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all"
+          >
+            SoundCloud
+          </a>
+        </div>
+
+        <a
+          href="/album/inesperado-contratiempo"
+          class="inline-flex items-center gap-1.5 text-[11px] tracking-[0.1em] uppercase text-white/40 hover:text-white/70 transition-colors mt-6"
+        >
+          Ver página completa del álbum
+          <span class="text-white/20">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap"
+  import { ScrollTrigger } from "gsap/ScrollTrigger"
+  gsap.registerPlugin(ScrollTrigger)
+
+  gsap.from(".fade-in-up", {
+    y: 60,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.15,
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: "#album",
+      start: "top 75%",
+      toggleActions: "play none none none",
+    },
+  })
+</script>

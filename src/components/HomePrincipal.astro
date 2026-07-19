@@ -4,16 +4,22 @@ const { HeroKeyBackground, LET } = Astro.props;
 ---
 
 <section id="section1" class="h-screen relative w-full">
-  <picture id="hero-key" class="h-screen scale-125 block overflow-hidden fixed">
+  <h1 class="sr-only text-white text-2xl">LLLIT — Visuales en vivo, mapping inmersivo y música electrónica</h1>
+  <picture id="hero-key" class="fixed inset-0 w-full h-screen">
     <img
       id="hero-key-logo"
       src={LET.src}
+      alt="LLLIT"
       class="absolute object-contain top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-1/8 w-[20rem]"
+      decoding="async"
     />
     <img
       id="hero-key-background"
       src={HeroKeyBackground.src}
+      alt=""
       class="w-full h-full object-cover opacity-12 z-0"
+      fetchpriority="high"
+      decoding="async"
     />
   </picture>
   <div class="w-full h-full flex justify-center items-center">
@@ -25,7 +31,7 @@ const { HeroKeyBackground, LET } = Astro.props;
       >
         <EmailIcon class="w-full h-full pointer-events-auto opacity-40" />
       </span>
-      <p class="mt-3 border-b text-white/30">lit.io30303@gmail.com</p>
+      <p class="mt-3 border-b text-white/30">lllit@mtsprz.org</p>
     </div>
   </div>
 </section>
@@ -62,6 +68,9 @@ const { HeroKeyBackground, LET } = Astro.props;
   });
   document.getElementById("go_to_price").addEventListener("click", () => {
     scrollToSection("#section4");
+  });
+  document.getElementById("go_to_album").addEventListener("click", () => {
+    scrollToSection("#album");
   });
 
   // COPIAR AL HACER CLICK CON EL ICON EMAIL

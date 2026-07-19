@@ -1,0 +1,221 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import HeaderShared from "@/components/HeaderShared.astro"
+import Footer from "@/components/Footer.astro"
+import { isReleased, RELEASE_DATE, ALBUM_TITLE, PROMO_CODES } from "@/data/promo-codes"
+
+const SITE_URL = "https://lllitmts.vercel.app"
+const released = isReleased()
+const remaining = PROMO_CODES.length
+
+const formattedDate = RELEASE_DATE.toLocaleDateString("es-ES", {
+  day: "numeric", month: "long", year: "numeric",
+})
+---
+
+<Layout
+  title="LLLIT — Canjear código promocional"
+  description={`Canjeá tu código promocional para "${ALBUM_TITLE}" de LLLIT. ${!released ? `Disponible desde el ${formattedDate}.` : `${remaining} códigos disponibles.`}`}
+  canonicalUrl={`${SITE_URL}/redeem`}
+  breadcrumbs={[
+    { name: "LLLIT", url: "/" },
+    { name: "Canjear código", url: "/redeem" },
+  ]}
+>
+  <HeaderShared />
+
+  <main class="min-h-screen bg-[#111] text-white flex flex-col items-center justify-center px-5 py-28">
+    <div class="w-full max-w-md">
+      <p class="text-[10px] tracking-[0.25em] uppercase text-white/30 mb-4 text-center font-medium">
+        LLLIT · {ALBUM_TITLE}
+      </p>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tighter text-center mb-2">
+        Canjear código
+      </h1>
+      <p class="text-sm text-white/40 text-center mb-10 leading-relaxed">
+        {released
+          ? `Ingresá tu correo para recibir un código de verificación y obtener tu código promocional de Bandcamp.`
+          : `El canje estará disponible a partir del ${formattedDate}.`
+        }
+      </p>
+
+      {released ? (
+        <div id="redeem-app" class="space-y-5">
+          <div id="step-email" class="space-y-3">
+            <label for="email-input" class="block text-[11px] tracking-[0.12em] uppercase text-white/40">
+              Tu correo electrónico
+            </label>
+            <div class="flex gap-2">
+              <input
+                id="email-input"
+                type="email"
+                placeholder="tucorreo@ejemplo.com"
+                class="flex-1 px-4 py-3 bg-white/[0.04] border border-white/10 rounded-lg text-sm text-white placeholder-white/20 outline-none focus:border-white/25 transition-colors"
+              />
+              <button
+                id="btn-send-code"
+                class="px-5 py-3 text-xs font-medium tracking-[0.08em] uppercase bg-white/10 hover:bg-white/15 border border-white/15 rounded-lg transition-all whitespace-nowrap disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Enviar
+              </button>
+            </div>
+            <p id="email-error" class="text-[11px] text-red-400/80 hidden"></p>
+            <p id="email-success" class="text-[11px] text-emerald-400/80 hidden"></p>
+          </div>
+
+          <div id="step-code" class="space-y-3 hidden">
+            <label for="code-input" class="block text-[11px] tracking-[0.12em] uppercase text-white/40">
+              Código de verificación (4 dígitos)
+            </label>
+            <div class="flex gap-2">
+              <input
+                id="code-input"
+                type="text"
+                inputmode="numeric"
+                maxlength="4"
+                placeholder="1234"
+                class="flex-1 px-4 py-3 bg-white/[0.04] border border-white/10 rounded-lg text-sm text-white placeholder-white/20 outline-none focus:border-white/25 transition-colors font-mono text-center tracking-[0.5em]"
+              />
+              <button
+                id="btn-verify"
+                class="px-5 py-3 text-xs font-medium tracking-[0.08em] uppercase bg-white/10 hover:bg-white/15 border border-white/15 rounded-lg transition-all whitespace-nowrap disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Verificar
+              </button>
+            </div>
+            <p id="code-error" class="text-[11px] text-red-400/80 hidden"></p>
+          </div>
+
+          <div id="step-success" class="hidden text-center space-y-4 py-6">
+            <div class="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto">
+              <span class="text-emerald-400 text-2xl">✓</span>
+            </div>
+            <p class="text-sm text-white/60">Tu código promocional de Bandcamp:</p>
+            <div class="bg-white/[0.04] border border-white/10 rounded-xl px-6 py-5">
+              <p id="promo-code-display" class="text-2xl font-mono font-bold tracking-[0.15em] text-amber-200/90 select-all"></p>
+            </div>
+            <p class="text-[11px] text-white/30">
+              Canjealo en <a href="https://lllit3.bandcamp.com/yum" target="_blank" rel="noopener noreferrer" class="underline hover:text-white/50">lllit3.bandcamp.com/yum</a>
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div class="text-center py-12 space-y-4">
+          <div class="w-14 h-14 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto">
+            <span class="text-amber-400/80 text-xl">⏎</span>
+          </div>
+          <div class="bg-white/[0.03] border border-white/[0.06] rounded-xl px-6 py-5 max-w-xs mx-auto">
+            <p class="text-sm text-white/50">
+              <span class="text-amber-200/70 font-medium">{formattedDate}</span>
+            </p>
+          </div>
+          <a
+            href="/"
+            class="inline-flex items-center gap-1.5 text-[11px] tracking-[0.1em] uppercase text-white/30 hover:text-white/60 transition-colors mt-4"
+          >
+            <span>&larr;</span>
+            Volver a LLLIT
+          </a>
+        </div>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  const emailInput = document.getElementById("email-input") as HTMLInputElement | null
+  const codeInput = document.getElementById("code-input") as HTMLInputElement | null
+  const btnSend = document.getElementById("btn-send-code") as HTMLButtonElement | null
+  const btnVerify = document.getElementById("btn-verify") as HTMLButtonElement | null
+  const emailError = document.getElementById("email-error") as HTMLElement | null
+  const emailSuccess = document.getElementById("email-success") as HTMLElement | null
+  const codeError = document.getElementById("code-error") as HTMLElement | null
+  const stepEmail = document.getElementById("step-email") as HTMLElement | null
+  const stepCode = document.getElementById("step-code") as HTMLElement | null
+  const stepSuccess = document.getElementById("step-success") as HTMLElement | null
+  const promoDisplay = document.getElementById("promo-code-display") as HTMLElement | null
+
+  let currentEmail = ""
+
+  function show(el: HTMLElement | null) { el?.classList.remove("hidden") }
+  function hide(el: HTMLElement | null) { el?.classList.add("hidden") }
+  function setError(el: HTMLElement | null, msg: string) {
+    if (el) { el.textContent = msg; el.classList.remove("hidden") }
+  }
+  function setSuccess(el: HTMLElement | null, msg: string) {
+    if (el) { el.textContent = msg; el.classList.remove("hidden") }
+  }
+
+  btnSend?.addEventListener("click", async () => {
+    const email = emailInput?.value.trim()
+    if (!email || !email.includes("@")) {
+      setError(emailError, "Ingresá un email válido.")
+      return
+    }
+    hide(emailError)
+    hide(emailSuccess)
+    btnSend.disabled = true
+    btnSend.textContent = "Enviando…"
+
+    try {
+      const res = await fetch("/api/redeem/request-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        currentEmail = email
+        hide(stepEmail)
+        show(stepCode)
+        codeInput?.focus()
+      } else {
+        setError(emailError, data.error || "Error al enviar el código.")
+      }
+    } catch {
+      setError(emailError, "Error de conexión. Intentalo de nuevo.")
+    } finally {
+      btnSend.disabled = false
+      btnSend.textContent = "Enviar"
+    }
+  })
+
+  btnVerify?.addEventListener("click", async () => {
+    const code = codeInput?.value.trim()
+    if (!code || code.length !== 4 || !/^\d{4}$/.test(code)) {
+      setError(codeError, "Ingresá el código de 4 dígitos.")
+      return
+    }
+    hide(codeError)
+    btnVerify.disabled = true
+    btnVerify.textContent = "Verificando…"
+
+    try {
+      const res = await fetch("/api/redeem/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: currentEmail, verificationCode: code }),
+      })
+      const data = await res.json()
+      if (data.success && data.promoCode) {
+        hide(stepCode)
+        show(stepSuccess)
+        if (promoDisplay) promoDisplay.textContent = data.promoCode
+      } else {
+        setError(codeError, data.error || "Código incorrecto.")
+      }
+    } catch {
+      setError(codeError, "Error de conexión. Intentalo de nuevo.")
+    } finally {
+      btnVerify.disabled = false
+      btnVerify.textContent = "Verificar"
+    }
+  })
+
+  codeInput?.addEventListener("input", () => {
+    if (codeInput.value.length > 4) codeInput.value = codeInput.value.slice(0, 4)
+    codeInput.value = codeInput.value.replace(/\D/g, "")
+  })
+</script>

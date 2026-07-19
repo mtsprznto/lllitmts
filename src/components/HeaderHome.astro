@@ -6,6 +6,8 @@ const {
   button_id_videos,
   title_button_price,
   button_id_price,
+  title_button_album,
+  button_id_album,
 } = Astro.props;
 ---
 
@@ -15,7 +17,7 @@ const {
   <div class="flex justify-between">
     <span class="ml-2">
       <a href="/">
-        <h1 class="font-bold tracking-tighter">LLLIT</h1>
+        <span class="font-bold tracking-tighter text-lg">LLLIT</span>
       </a>
     </span>
     <div class="flex justify-end tracking-tighter z-9999">
@@ -38,6 +40,13 @@ const {
       >
         {title_button_price}
       </button>
+      <a
+        id={button_id_album}
+        class="z-9999 cursor-pointer h-full hover:bg-white/30 px-2 inline-flex items-center"
+        href="/album"
+      >
+        Discografía
+      </a>
     </div>
   </div>
 </nav>

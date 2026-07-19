@@ -5,11 +5,89 @@ import HeaderShared from "@/components/HeaderShared.astro";
 import Footer from "@/components/Footer.astro";
 ---
 
-<Layout>
+<Layout
+  title="LLLIT — Precios Mapping Visual | Servicios de proyección mapping"
+  description="Precios de mapping visual en vivo con y sin proyector. Servicios de TouchDesigner, VJ, y producción visual para eventos."
+  ogTitle="LLLIT — Precios Mapping Visual"
+  ogDescription="Precios de mapping visual en vivo con TouchDesigner. Servicios con y sin proyector."
+  canonicalUrl="https://lllitmts.vercel.app/prices"
+>
   <HeaderShared />
   <PricingSection />
+
+  <section class="bg-[#111] text-white px-5 sm:px-8 py-20 max-w-3xl mx-auto" data-content-visibility>
+    <h2 class="text-2xl sm:text-3xl font-bold tracking-tighter mb-10 text-center">
+      Preguntas frecuentes
+    </h2>
+    <div class="space-y-8">
+      <div>
+        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Qué es el mapping visual?</h3>
+        <p class="text-sm text-white/50 leading-relaxed">
+          El mapping visual (proyección mapping o video mapping) es una técnica que proyecta imágenes y animaciones sobre estructuras reales (edificios, objetos, escenarios) para transformarlas visualmente. Se usa en shows en vivo, eventos y presentaciones artísticas.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Qué software usa LLLIT?</h3>
+        <p class="text-sm text-white/50 leading-relaxed">
+          TouchDesigner, una plataforma de programación visual para contenido interactivo en tiempo real. Permite crear visuals generativos, reaccionar a audio y controlar proyecciones en vivo.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Cuál es la diferencia entre con y sin proyector?</h3>
+        <p class="text-sm text-white/50 leading-relaxed">
+          Sin proyector ($70,000 ARS): llevás tu propio proyector o usamos el del venue. Con proyector ($120,000 ARS): incluye proyector láser de alto brillo ideal para espacios sin equipo disponible.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Hacen VJ en vivo?</h3>
+        <p class="text-sm text-white/50 leading-relaxed">
+          Sí, LLLIT ofrece sesiones de VJ en vivo con control en tiempo real, ideales para fiestas, festivales y presentaciones de música electrónica.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <Footer />
 </Layout>
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Qué es el mapping visual?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El mapping visual (proyección mapping o video mapping) es una técnica que proyecta imágenes y animaciones sobre estructuras reales (edificios, objetos, escenarios) para transformarlas visualmente. Se usa en shows en vivo, eventos y presentaciones artísticas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Qué software usa LLLIT?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "TouchDesigner, una plataforma de programación visual para contenido interactivo en tiempo real. Permite crear visuals generativos, reaccionar a audio y controlar proyecciones en vivo."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cuál es la diferencia entre con y sin proyector?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sin proyector ($70,000 ARS): llevás tu propio proyector o usamos el del venue. Con proyector ($120,000 ARS): incluye proyector láser de alto brillo ideal para espacios sin equipo disponible."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Hacen VJ en vivo?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí, LLLIT ofrece sesiones de VJ en vivo con control en tiempo real, ideales para fiestas, festivales y presentaciones de música electrónica."
+      }
+    }
+  ]
+})} />
 
 <style>
   html,

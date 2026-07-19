@@ -6,31 +6,40 @@ import MailIcono from "@/assets/svg_icon/mail.svg";
 
 <!-- FOOTER? -->
 <footer class="border-t p-6">
-  <div class="w-full flex justify-between h-full z-9999">
-    <button
-      class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
-    >
-      <a href="/formulario" target="" rel="noopener noreferrer"
-        ><FormIcono class="w-15 h-15" />
-      </a>
-    </button>
-    <button
-      class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
-    >
-      <a
-        href="https://www.instagram.com/lllit_3/"
-        target="_blank"
-        rel="noopener noreferrer"
+  <div class="w-full z-9999 relative">
+    <div class="flex justify-between h-full">
+      <button
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
       >
-        <IGIcono class="w-15 h-15" />
-      </a>
-    </button>
-    <button
-      class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
-    >
-      <a href="mailto:lit.io30303@gmail.com">
-        <MailIcono class="w-15 h-15" />
-      </a>
-    </button>
+        <a href="/formulario" target="" rel="noopener noreferrer"
+          ><FormIcono class="w-15 h-15" />
+        </a>
+      </button>
+      <button
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+      >
+        <a
+          href="https://www.instagram.com/lllit_3/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <IGIcono class="w-15 h-15" />
+        </a>
+      </button>
+      <button
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+      >
+        <a href="mailto:lllit@mtsprz.org">
+          <MailIcono class="w-15 h-15" />
+        </a>
+      </button>
+    </div>
+    <div class="flex justify-center mt-6 gap-6 text-[10px] tracking-[0.12em] uppercase">
+      <a href="/redeem" class="text-white/30 hover:text-white/70 transition-colors">Canjear código</a>
+      <span class="text-white/10">·</span>
+      <a href="/album" class="text-white/30 hover:text-white/70 transition-colors">Discografía</a>
+      <span class="text-white/10">·</span>
+      <a href="/prices" class="text-white/30 hover:text-white/70 transition-colors">Precios</a>
+    </div>
   </div>
 </footer>

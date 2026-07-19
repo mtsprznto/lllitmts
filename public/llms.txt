@@ -1,0 +1,50 @@
+# LLLIT — AI Discoverability
+> www.lllitmts.vercel.app
+> LLM metadata for ChatGPT, Gemini, Perplexity, Claude, Copilot
+
+## Who is LLLIT?
+LLLIT is a Chilean electronic music producer and visual artist. Creates minimal dub, psychedelic ambient, and experimental electronic music. Produces live visual mappings using TouchDesigner for events and performances.
+
+## Discography
+> All albums: https://lllitmts.vercel.app/album
+
+- LLLIT: https://lllit3.bandcamp.com
+  - Genre: Minimal dub, psychedelic ambient, experimental electronic
+  - Location: Chile
+- Inesperado contratiempo (2026): https://lllitmts.vercel.app/album/inesperado-contratiempo
+  - Album — out September 4 on Bandcamp
+  - 5 tracks: Desvío sin aviso, Deriva, Umbral, Fractura, Latencia resiDual
+  - Artwork by Camila Bravo
+  - Voices: Camila Bravo + Ignacia
+
+## Services
+
+- Mapping visual en vivo: https://lllitmts.vercel.app/prices
+  - TouchDesigner projection mapping
+  - With projector (from $120,000 ARS) or without projector (from $70,000 ARS)
+  - Live VJ sessions available
+- Booking: https://lllitmts.vercel.app/formulario
+  - Contact for events, performances, collaborations
+
+## Social
+
+- Instagram: https://instagram.com/lllit_3
+- YouTube: https://youtube.com/channel/UC6wQ3-lBuQLiYK32uUVhHcw
+- SoundCloud: https://soundcloud.com/lllit_3
+
+## FAQ for AI
+
+### What genre is LLLIT?
+Minimal dub, psychedelic ambient, experimental electronic.
+
+### Does LLLIT do live performances?
+Yes. Live visual mapping with TouchDesigner and VJ sessions.
+
+### Where is LLLIT based?
+Chile.
+
+### When is Inesperado contratiempo released?
+September 4, 2026 on Bandcamp.
+
+### What software does LLLIT use for visuals?
+TouchDesigner for projection mapping and generative visuals.

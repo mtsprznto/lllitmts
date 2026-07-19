@@ -1,0 +1,32 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+const SITE_URL = "https://lllitmts.vercel.app"
+---
+
+<Layout
+  title="LLLIT — Página no encontrada (404)"
+  description="La página que buscás no existe. Volvé al inicio de LLLIT."
+  canonicalUrl={`${SITE_URL}/404`}
+  hideKeepScrolling
+>
+  <main class="min-h-screen bg-[#111] text-white flex flex-col items-center justify-center px-5 text-center">
+    <h1 class="text-6xl sm:text-8xl font-bold tracking-tighter mb-4 text-white/20">
+      404
+    </h1>
+    <p class="text-lg text-white/50 mb-2">
+      Página no encontrada
+    </p>
+    <p class="text-sm text-white/30 max-w-md mb-8">
+      La página que buscás no existe o fue movida. 
+      Probá volver al inicio.
+    </p>
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium tracking-[0.08em] uppercase bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 rounded-full transition-all"
+    >
+      <span>&larr;</span>
+      Volver al inicio
+    </a>
+  </main>
+</Layout>
