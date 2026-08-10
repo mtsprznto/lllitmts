@@ -1,0 +1,57 @@
+---
+/**
+ * ThemeToggle — Alterna Light/Dark Mode.
+ * Persistente vía localStorage ("theme"), respeta default dark del sitio.
+ * Estética Y2K Brutalista: botón rectangular con corchetes.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  aria-label="Alternar modo claro / oscuro"
+  title="Alternar tema"
+  class:list={[
+    "group inline-flex items-center gap-2 border-2 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-widest cursor-pointer select-none",
+    "border-[var(--line)] text-[var(--ink)] bg-[var(--surface)] hover:bg-neon hover:text-black hover:border-black",
+    "transition-colors duration-150",
+    className,
+  ]}
+>
+  <span class="opacity-60 group-hover:opacity-100">[</span>
+  <span data-theme-label>Dark</span>
+  <span class="opacity-60 group-hover:opacity-100">]</span>
+</button>
+
+<script>
+  const btn = document.getElementById("theme-toggle");
+  const label = btn?.querySelector<HTMLElement>("[data-theme-label]");
+  const root = document.documentElement;
+
+  function apply(theme: "light" | "dark") {
+    root.classList.toggle("dark", theme === "dark");
+    root.style.colorScheme = theme;
+    if (label) label.textContent = theme === "dark" ? "Dark" : "Light";
+    try {
+      localStorage.setItem("theme", theme);
+    } catch (e) {}
+  }
+
+  // Sincroniza con el estado ya aplicado por el script inline del Layout
+  apply(root.classList.contains("dark") ? "dark" : "light");
+
+  btn?.addEventListener("click", () => {
+    const next = root.classList.contains("dark") ? "light" : "dark";
+    apply(next);
+  });
+
+  // Refleja cambios de tema hechos en otra pestaña
+  window.addEventListener("storage", (e) => {
+    if (e.key === "theme") apply(e.newValue === "light" ? "light" : "dark");
+  });
+</script>

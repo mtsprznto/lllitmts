@@ -6,6 +6,9 @@ import { albums } from "@/data/albums"
 
 const SITE_URL = "https://lllitmts.vercel.app"
 
+// Etiqueta de géneros única para el eyebrow (todo lowercase en el template)
+const genreLabel = [...new Set(albums.flatMap((a) => a.genres))].join(" · ")
+
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [
@@ -50,29 +53,92 @@ const structuredData = {
 >
   <HeaderShared />
 
-  <main class="min-h-screen bg-[#111] text-white">
-    <div class="absolute inset-0 bg-gradient-to-b from-white/[0.02] via-transparent to-transparent pointer-events-none"></div>
+  <main
+    id="album-index"
+    class="album-index relative min-h-screen overflow-hidden bg-[#0a0a0a] text-white"
+  >
+    <!-- Capa ASCII decorativa (desktop, con parallax sutil) -->
+    <pre
+      data-ascii
+      aria-hidden="true"
+      class="pointer-events-none absolute bottom-0 right-0 hidden select-none font-mono text-[10px] leading-[1.15] text-white opacity-[0.05] lg:block"
+>▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓ LLLIT ▓ DISCOTECA ▓ CATÁLOGO ▓ IC/26 ▓ SEPT 04 ▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+██ 10110110 ██ 01001101 ██ 01101001 ██ 01101110 ██ ██
+██ 01001001 ██ 01000011 ██ 00101111 ██ 00110110 ██ ██
+██████████████████████████████████████████████████████</pre>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-8 pt-28 pb-24">
-      <header class="mb-16 md:mb-20 text-center">
-        <p class="text-[10px] tracking-[0.25em] uppercase text-white/30 mb-4 font-medium">
-          Catálogo
+    <!-- Sticker amarillo (desktop, flotante) -->
+    <div
+      data-sticker
+      aria-hidden="true"
+      class="absolute right-6 top-24 z-20 hidden -rotate-6 select-none border-2 border-black bg-[#fde047] px-4 py-2 text-center shadow-[4px_4px_0_rgba(0,0,0,0.6)] lg:block"
+    >
+      <p class="font-mono text-[10px] font-bold uppercase leading-tight tracking-[0.18em] text-black">
+        {albums.length} Releases
+      </p>
+      <p class="font-mono text-[8px] uppercase leading-tight tracking-[0.25em] text-black/60">
+        Catálogo 2026
+      </p>
+    </div>
+
+    <div class="relative z-10 mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:py-28">
+      <!-- Topbar -->
+      <div class="mb-16 flex items-center justify-between border-b border-white/10 pb-3">
+        <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">
+          [ LLLIT — Discoteca ]
+        </span>
+        <span class="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-white/25 sm:block">
+          Catálogo // 2026
+        </span>
+      </div>
+
+      <!-- Header editorial -->
+      <header class="mb-16 md:mb-20 max-w-3xl">
+        <p data-anim class="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-amber-300/90">
+          /// {genreLabel.toLowerCase()}
         </p>
-        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.9] tracking-tighter mb-4">
+        <h1
+          id="album-index-title"
+          class="text-5xl font-bold uppercase leading-[0.9] tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl"
+        >
           Discografía
         </h1>
-        <p class="text-sm text-white/40 max-w-md mx-auto leading-relaxed">
-          {albums.length} {albums.length === 1 ? "lanzamiento" : "lanzamientos"} · Minimal dub, ambient psicodélico y experimental
+        <p data-anim class="mt-6 max-w-xl text-sm leading-relaxed text-white/50">
+          {albums.length} {albums.length === 1 ? "lanzamiento" : "lanzamientos"} · cinta maestra,
+          vinilo y Bandcamp Friday. {albums[0]?.description}
         </p>
+
+        <!-- Badges -->
+        <div data-anim class="mt-7 flex flex-wrap gap-2">
+          <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ {albums.length} Lanzamientos ]</span>
+          <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ Vinilo ]</span>
+          <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ NYP ]</span>
+          <span class="border border-amber-300/30 bg-amber-300/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200/90">[ 2026 ]</span>
+        </div>
       </header>
 
-      <div id="album-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10">
+      <!-- Estantería de vinilos -->
+      <div
+        id="album-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-10"
+      >
         {albums.map((album, i) => (
           <a
             href={`/album/${album.slug}`}
+            data-card
             class="group block vinyl-card"
           >
             <div class="relative w-full mb-5 vinyl-wrapper" style="aspect-ratio: 1 / 1;">
+              <!-- Marcas de esquina (desktop) -->
+              <span class="absolute -left-3 -top-3 hidden h-5 w-5 items-center justify-center font-mono text-[11px] text-white/40 sm:flex" aria-hidden="true">+</span>
+              <span class="absolute -right-3 -top-3 hidden h-5 w-5 items-center justify-center font-mono text-[11px] text-white/40 sm:flex" aria-hidden="true">+</span>
+              <span class="absolute -bottom-3 -left-3 hidden h-5 w-5 items-center justify-center font-mono text-[11px] text-white/40 sm:flex" aria-hidden="true">+</span>
+              <span class="absolute -bottom-3 -right-3 hidden h-5 w-5 items-center justify-center font-mono text-[11px] text-white/40 sm:flex" aria-hidden="true">+</span>
+
               <div class="absolute inset-[3%] rounded-full vinyl-disc
                 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black shadow-2xl
                 ring-1 ring-white/[0.04]">
@@ -111,18 +177,29 @@ const structuredData = {
               </div>
             </div>
 
-            <div class="text-center space-y-1.5">
-              <p class="text-[10px] tracking-[0.2em] uppercase text-white/30 font-medium">
+            <!-- Pie de vinilo (brutalista) -->
+            <div class="flex items-center justify-between px-1 font-mono text-[9px] uppercase tracking-[0.2em] text-white/30">
+              <span>[ {album.releaseType} ]</span>
+              <span>{album.campaignDate}</span>
+            </div>
+
+            <div class="mt-1 text-center space-y-1.5">
+              <p class="font-mono text-[10px] tracking-[0.2em] uppercase text-white/30">
                 {album.artist}
               </p>
-              <h2 class="text-lg sm:text-xl font-bold tracking-tight leading-tight group-hover:text-white/80 transition-colors">
+              <h2 class="text-lg sm:text-xl font-bold tracking-tight leading-tight transition-colors group-hover:text-amber-200">
                 {album.title}
               </h2>
-              <div class="flex items-center justify-center gap-2 text-[11px] text-white/30">
+              <div class="flex items-center justify-center gap-2 font-mono text-[11px] text-white/30">
                 <span>{album.releaseDate.split("-")[0]}</span>
-                <span class="w-1 h-1 rounded-full bg-white/20"></span>
-                <span class="uppercase tracking-[0.08em]">{album.genres[0]}</span>
+                <span class="w-1 h-1 bg-white/20"></span>
+                <span class="uppercase">{album.genres[0].toLowerCase()}</span>
+                <span class="w-1 h-1 bg-white/20"></span>
+                <span>{album.tracks.length} TRACKS</span>
               </div>
+              <p class="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-200/60">
+                NYP {album.price}
+              </p>
             </div>
           </a>
         ))}
@@ -133,6 +210,18 @@ const structuredData = {
           <p class="text-white/30 text-sm tracking-[0.1em] uppercase">Próximamente</p>
         </div>
       )}
+
+      <!-- Volver -->
+      <div class="mt-24 text-center">
+        <a
+          href="/"
+          data-anim
+          class="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.2em] text-white/30 transition-colors hover:text-white/60"
+        >
+          <span aria-hidden="true">&larr;</span>
+          Volver a LLLIT
+        </a>
+      </div>
     </div>
   </main>
 
@@ -140,6 +229,7 @@ const structuredData = {
 </Layout>
 
 <style>
+  /* ── Animación de vinilo (intacta) ───────────────────────────── */
   .vinyl-card {
     position: relative;
     transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
@@ -203,22 +293,127 @@ const structuredData = {
   }
 </style>
 
+<style is:global>
+  /* Spans inyectados por SplitText en runtime → globales,
+     pero namespaced bajo .album-index para no filtrar. */
+  .album-index .split-line {
+    display: block;
+    overflow: hidden;
+  }
+  .album-index .split-char {
+    display: inline-block;
+    will-change: transform;
+  }
+</style>
+
 <script>
   import { gsap } from "gsap"
   import { ScrollTrigger } from "gsap/ScrollTrigger"
-  gsap.registerPlugin(ScrollTrigger)
+  import { SplitText } from "gsap/SplitText"
 
-  gsap.from(".vinyl-card", {
-    y: 80,
-    opacity: 0,
-    rotation: -5,
-    duration: 0.7,
-    stagger: 0.1,
-    ease: "power3.out",
-    scrollTrigger: {
-      trigger: "#album-grid",
-      start: "top 85%",
-      toggleActions: "play none none none",
-    },
-  })
+  gsap.registerPlugin(ScrollTrigger, SplitText)
+
+  const page = document.getElementById("album-index")
+  if (page) {
+    gsap.context(() => {
+      const mm = gsap.matchMedia()
+
+      // ── Usuario con prefers-reduced-motion: todo estático ──
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        return () => {}
+      })
+
+      // ── Motion completo (solo si el usuario no pidió reducirlo) ──
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Split del título por caracteres, enmascarado por línea
+        const split = new SplitText("#album-index-title", {
+          type: "chars,lines",
+          charsClass: "split-char",
+          linesClass: "split-line",
+        })
+
+        // Parallax de la capa ASCII
+        gsap.fromTo(
+          "[data-ascii]",
+          { yPercent: 15 },
+          {
+            yPercent: -15,
+            ease: "none",
+            scrollTrigger: {
+              trigger: page,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        )
+
+        // Coreografía de entrada
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: page, start: "top 72%" },
+        })
+
+        tl.from(".split-char", {
+            yPercent: 110,
+            rotation: 6,
+            autoAlpha: 0,
+            duration: 0.65,
+            stagger: 0.02,
+            ease: "power3.out",
+          })
+          .from(
+            "[data-anim]",
+            {
+              y: 26,
+              autoAlpha: 0,
+              duration: 0.6,
+              stagger: 0.1,
+              ease: "power3.out",
+            },
+            0.35
+          )
+          .from(
+            "[data-card]",
+            {
+              y: 60,
+              rotation: -4,
+              autoAlpha: 0,
+              duration: 0.6,
+              stagger: 0.08,
+              ease: "power3.out",
+            },
+            0.6
+          )
+          .from(
+            "[data-sticker]",
+            {
+              scale: 0,
+              rotation: -30,
+              autoAlpha: 0,
+              duration: 0.5,
+              ease: "back.out(2)",
+            },
+            1.0
+          )
+
+        // Flotación del sticker (solo desktop)
+        const isDesktop = window.matchMedia("(min-width: 1024px)").matches
+        if (isDesktop) {
+          gsap.to("[data-sticker]", {
+            y: 12,
+            rotation: 4,
+            duration: 2.6,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+            delay: 2,
+          })
+        }
+
+        return () => {
+          split.revert()
+        }
+      })
+    }, page)
+  }
 </script>

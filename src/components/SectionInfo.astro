@@ -1,53 +1,139 @@
 ---
-const { LET } = Astro.props;
+/**
+ * SectionInfo — Sección 2 · Presentación inmersiva "VISUALES EN VIVO"
+ *
+ * Estética Y2K Brutalista / editorial experimental (dirección Barbiana Liu):
+ *   - AsciiCanvas de fondo con parallax (scroll-linked)
+ *   - Título gigante fluido (clamp) + wordmark ASCII como textura
+ *   - Badge amarillo neón flotante
+ *   - Bio con SplitType + hover de paleta curada
+ *   - Videos con marco de alto contraste, índice [01], scanlines al hover
+ *   - Barra de sección: reloj DDD HH:MM:SS AM/PM + email de contacto
+ *
+ * Choreografía propia (scoped, cleanup vía Astro):
+ *   - Parallax ASCII + reveal spotlight (ScrollTrigger + scrub)
+ *   - Entrada del título por caracteres (SplitType)
+ *   - Stagger de videos al entrar la grilla
+ *   - prefers-reduced-motion respetado via gsap.matchMedia()
+ */
+
+const { LET, email = "lllit@mtsprz.org" } = Astro.props;
+
+import AsciiLogo from "./AsciiLogo.astro";
+import AsciiCanvas from "./AsciiCanvas.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import VideoGrid from "./VideoGrid.astro";
+
+const videos = [
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2aC50w8NZ0SKExydXnOsaHh5Zopf4cBJtAg2P7",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2ag1LBNhrt3qTU4aZw7euztsYHd1IlBPGERhKF",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2amAJhlfGAxW3d57FVvqbwz08cf4ohSyauM9G1",
+];
+
+const captions = ["MAPPING 01", "MAPPING 02", "LIVE VJ"];
 ---
 
-<!-- Secion 2 -->
-<section id="section2" class="h-screen relative w-full">
-  <header class="flex justify-between w-full px-6" id="header_let_logo">
+<!-- Sección 2 · Presentación inmersiva -->
+<section
+  id="section2"
+  class="relative w-full overflow-hidden bg-[var(--surface)] text-[var(--ink)]"
+>
+  <!-- Capa 1 · Fondo ASCII con parallax -->
+  <AsciiCanvas />
+
+  <!-- Header: logo + toggle de tema -->
+  <header
+    class="relative z-10 flex items-center justify-between w-full px-4 sm:px-8 pt-5"
+  >
     <img
       src={LET.src}
-      alt="Logo"
-      class="w-33 h-33 md:w-30 md:h-30 opacity-0 object-contain"
+      alt="LLLIT"
       id="logo_header"
+      class="w-16 h-16 md:w-20 md:h-20 object-contain opacity-0"
+      decoding="async"
     />
+    <ThemeToggle />
   </header>
-  <main class="relative w-full h-full overflow-hidden opacity-0" id="section2">
-    <div class="flex flex-col w-full h-full mt-0 ">
-      <p class="text-[1.5rem] tracking-wide mb-2 px-6" id="parrafo">
-        LLL es un proyecto de visuales en vivo que busca crear una experiencia
-        inmersiva y única a través de la combinación de música, tecnología y
-        arte visual.
-      </p>
-      <div class="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 w-full h-full">
-        <video
-          src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2aC50w8NZ0SKExydXnOsaHh5Zopf4cBJtAg2P7"
-          muted
-          autoplay
-          playsinline
-          preload="auto"
-          class="object-cover w-full rounded-lg shadow-md"
-          loop></video>
-        <video
-          src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2ag1LBNhrt3qTU4aZw7euztsYHd1IlBPGERhKF"
-          muted
-          autoplay
-          playsinline
-          preload="auto"
-          class="object-cover w-full rounded-lg shadow-md"
-          loop></video>
-        <video
-          src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2amAJhlfGAxW3d57FVvqbwz08cf4ohSyauM9G1"
-          muted
-          autoplay
-          playsinline
-          preload="auto"
-          class="object-cover w-full rounded-lg shadow-md"
-          loop></video>
-      </div>
+
+  <main class="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-8 pt-10 pb-8">
+    <!-- Eyebrow mono -->
+    <p
+      class="font-mono text-[0.7rem] sm:text-xs font-bold uppercase tracking-[0.35em] text-[var(--muted)] mb-6"
+    >
+      [ LIVE VISUALS / 2026 ]
+    </p>
+
+    <!-- Título gigante fluido -->
+    <h2
+      id="section2-title"
+      class="font-bold uppercase leading-[0.85] tracking-tighter text-center"
+      style="font-size: clamp(2.6rem, 10vw, 8.5rem);"
+    >
+      <span class="block">Visuales</span>
+      <span class="block">en vivo</span>
+    </h2>
+
+    <!-- Wordmark ASCII como textura bajo el título -->
+    <div id="logo-mask" class="mt-2 w-full flex justify-center" style="
+      -webkit-mask-image: radial-gradient(circle, #000 0%, #000 45%, transparent 70%);
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-image: radial-gradient(circle, #000 0%, #000 45%, transparent 70%);
+      mask-repeat: no-repeat;
+      mask-position: center;
+    ">
+      <AsciiLogo
+        class="text-[clamp(0.5rem,3vw,2rem)] text-[var(--muted)]"
+      />
     </div>
+
+    <!-- Badge amarillo flotante (estilo @designbarbiana) -->
+    <div
+      id="section2-badge"
+      class="absolute top-[16%] right-[6%] sm:top-[20%] sm:right-[10%] z-20"
+    >
+      <span
+        class="inline-block rotate-6 bg-neon text-black border-2 border-black px-3 py-1 font-mono text-[0.65rem] sm:text-xs font-bold uppercase tracking-widest shadow-[4px_4px_0_#000]"
+      >
+        ● Live VJ
+      </span>
+    </div>
+
+    <!-- Bio con SplitType + hover -->
+    <p
+      id="parrafo"
+      class="mt-8 max-w-2xl text-center text-[1.1rem] sm:text-[1.3rem] leading-relaxed text-[var(--muted)]"
+    >
+      LLLIT es un proyecto de visuales en vivo que busca crear una experiencia
+      inmersiva y única a través de la combinación de música, tecnología y
+      arte visual.
+    </p>
   </main>
+
+  <!-- Videos: marco brutalista -->
+  <div class="relative z-10 w-full px-4 sm:px-8 pb-12">
+    <VideoGrid videos={videos} captions={captions} id="section2-videos" />
+  </div>
+
+  <!-- Barra de sección: reloj DDD HH:MM:SS AM/PM + email -->
+  <footer
+    class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-3 border-t-2 border-[var(--line)] px-4 sm:px-8 py-4 font-mono text-[0.7rem] sm:text-xs font-bold uppercase tracking-widest text-[var(--muted)]"
+  >
+    <span id="clock-live" aria-live="off">--- --:--:-- --</span>
+    <a
+      href={`mailto:${email}`}
+      class="underline decoration-2 underline-offset-4 hover:text-neon hover:decoration-neon transition-colors"
+    >
+      {email}
+    </a>
+  </footer>
 </section>
+
+<style>
+  #logo-mask {
+    will-change: mask-size, -webkit-mask-size, opacity;
+  }
+</style>
 
 <script>
   import { gsap } from "gsap";
@@ -56,20 +142,144 @@ const { LET } = Astro.props;
 
   gsap.registerPlugin(ScrollTrigger);
 
-  gsap.from("#logo_header", { x: 100, duration: 1 });
+  const PALETTE = ["#f472b6", "#22d3ee", "#a78bfa", "#ffffff", "#ffff00"];
 
-  const parrafo = new SplitType("#parrafo", { types: "words,chars" });
+  const mm = gsap.matchMedia();
 
-  parrafo.chars.forEach((char, index) => {
-    let chatsT2 = gsap.timeline();
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    // Parallax del ASCII de fondo — scroll-linked, solo transform
+    gsap.fromTo(
+      "[data-ascii-canvas]",
+      { yPercent: -8 },
+      {
+        yPercent: 8,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#section2",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      }
+    );
 
-    char.addEventListener("mouseenter", () => {
-      gsap.to(char, {
-        color: `rgb(${gsap.utils.random(0, 255)},${gsap.utils.random(
-          0,
-          255
-        )},${gsap.utils.random(0, 255)})`,
+    // Spotlight reveal del wordmark ASCII
+    gsap.fromTo(
+      "#logo-mask",
+      { opacity: 0, maskSize: "0% 0%" },
+      {
+        opacity: 1,
+        maskSize: "150% 150%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#section2",
+          start: "top 70%",
+          end: "center 45%",
+          scrub: true,
+        },
+      }
+    );
+
+    // Entrada del título por caracteres (SplitType)
+    const title = new SplitType("#section2-title", { types: "words,chars" });
+
+    // Re-aplica el acento neón a "en vivo" (SplitType crea spans sin clases)
+    title.words
+      .filter((w) => /en|vivo/i.test(w.textContent || ""))
+      .forEach((w) =>
+        w.querySelectorAll(".char").forEach((c) => (c.style.color = "var(--color-neon)"))
+      );
+
+    gsap.from(title.chars, {
+      yPercent: 110,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.028,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: "#section2-title",
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    // Badge amarillo: entra con rebote leve
+    gsap.from("#section2-badge", {
+      y: -40,
+      opacity: 0,
+      rotation: 15,
+      duration: 0.8,
+      ease: "back.out(2.5)",
+      scrollTrigger: {
+        trigger: "#section2",
+        start: "top 60%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    // Bio: SplitType + hover con paleta curada
+    const parrafo = new SplitType("#parrafo", { types: "words,chars" });
+
+    parrafo.chars.forEach((char) => {
+      char.addEventListener("mouseenter", () => {
+        const color = PALETTE[gsap.utils.random(0, PALETTE.length - 1, 1)];
+        gsap.to(char, {
+          color,
+          scale: 1.2,
+          yPercent: -10,
+          duration: 0.25,
+          ease: "power2.out",
+        });
+      });
+      char.addEventListener("mouseleave", () => {
+        gsap.to(char, {
+          color: "var(--muted)",
+          scale: 1,
+          yPercent: 0,
+          duration: 0.4,
+          ease: "power2.out",
+        });
       });
     });
+
+    // Videos: stagger al entrar la grilla
+    gsap.from("#section2-videos [data-video-item]", {
+      y: 60,
+      opacity: 0,
+      duration: 0.7,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: "#section2-videos",
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+    });
   });
+
+  mm.add("(prefers-reduced-motion: reduce)", () => {
+    gsap.set("#logo-mask", { opacity: 1, maskSize: "150% 150%" });
+    gsap.set("#logo_header", { opacity: 1 });
+    gsap.set("#section2-title, #section2-badge, #section2-videos [data-video-item]", {
+      opacity: 1,
+    });
+  });
+
+  // Reloj en vivo DDD HH:MM:SS AM/PM — funciona siempre (no es "motion")
+  const clockEl = document.getElementById("clock-live");
+  const DAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const pad2 = (n: number) => String(n).padStart(2, "0");
+
+  function tick() {
+    const d = new Date();
+    const h12 = d.getHours() % 12 || 12;
+    const meridiem = d.getHours() >= 12 ? "PM" : "AM";
+    if (clockEl) {
+      clockEl.textContent = `${DAYS[d.getDay()]} ${pad2(h12)}:${pad2(
+        d.getMinutes()
+      )}:${pad2(d.getSeconds())} ${meridiem}`;
+    }
+  }
+  tick();
+  setInterval(tick, 1000);
 </script>

@@ -1,172 +1,470 @@
 ---
-import AudioPreview from "@/components/AudioPreview.astro"
+// ─────────────────────────────────────────────────────────────
+//  ALBUM PROMO — Inesperado contratiempo (LLLIT, 2026)
+//  Estética: brutalist / Y2K dark editorial
+//  Motion: GSAP 3.13 — SplitText chars, ScrollTrigger, countdown
+//  A11y: prefers-reduced-motion respetado vía gsap.matchMedia()
+// ─────────────────────────────────────────────────────────────
 
 const tracks = [
   { num: "01", name: "Desvío sin aviso", bpm: 103, pct: 63 },
   { num: "02", name: "Deriva", bpm: 95, pct: 52 },
-  { num: "03", name: "Umbral", bpm: "99.9", pct: 58 },
+  { num: "03", name: "Umbral", bpm: 99.9, pct: 58 },
   { num: "04", name: "Fractura", bpm: 114, pct: 85 },
   { num: "05", name: "Latencia resiDual", bpm: 113, pct: 82 },
+]
+
+const credits = [
+  { role: "Música / Producción", name: "LLLIT (Matias)" },
+  { role: "Arte de tapa", name: "Camila Bravo" },
+  { role: "Voz", name: "Camila Bravo + Ignacia" },
+  { role: "Visuales", name: "LLLIT (TouchDesigner)" },
+]
+
+const links = [
+  { label: "Bandcamp", href: "https://lllit3.bandcamp.com", external: true },
+  { label: "Instagram", href: "https://instagram.com/lllit_3", external: true },
+  { label: "YouTube", href: "https://youtube.com/channel/UC6wQ3-lBuQLiYK32uUVhHcw", external: true },
+  { label: "SoundCloud", href: "https://soundcloud.com/lllit_3", external: true },
 ]
 ---
 
 <section
   id="album"
-  class="relative min-h-screen w-full bg-[#111] text-white overflow-hidden"
+  class="album-promo relative overflow-hidden bg-[#0a0a0a] text-white"
 >
-  <div class="absolute inset-0 opacity-[0.06]">
-    <img src="/images/album/visual-bg.webp" alt="" class="w-full h-full object-cover" aria-hidden="true" />
+  <!-- Fondo: visual con parallax -->
+  <div class="absolute inset-0" aria-hidden="true">
+    <img
+      data-bg-visual
+      src="/images/album/visual-bg.webp"
+      alt=""
+      class="h-full w-full scale-[1.08] object-cover opacity-[0.07]"
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-[#0a0a0a]/70 to-[#0a0a0a]"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/50 via-transparent to-[#0a0a0a]/50"></div>
   </div>
-  <div class="absolute inset-0 bg-gradient-to-b from-[#111] via-[#111]/60 to-[#111]"></div>
-  <div class="absolute inset-0 bg-gradient-to-r from-[#111]/40 via-transparent to-[#111]/40"></div>
 
-  <div class="relative z-10 flex flex-col justify-center min-h-screen px-5 sm:px-8 py-20 max-w-7xl mx-auto">
-    <span class="text-[10px] tracking-[0.2em] uppercase text-white/30 mb-6">
-      Nuevo Lanzamiento
-    </span>
+  <!-- Capa ASCII decorativa (desktop) -->
+  <pre
+    data-ascii
+    aria-hidden="true"
+    class="pointer-events-none absolute bottom-0 right-0 hidden select-none font-mono text-[10px] leading-[1.15] text-white opacity-[0.05] lg:block"
+>▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+▓ LLLIT ▓ IC/26 ▓ INESPERADO CONTRATIEMPO ▓ SEPT 04 ▓
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+██ 10110110 ██ 01001101 ██ 01101001 ██ 01101110 ██ ██
+██ 01001001 ██ 01000011 ██ 00101111 ██ 00110110 ██ ██
+██████████████████████████████████████████████████████</pre>
 
-    <div class="grid md:grid-cols-5 gap-10 md:gap-16 items-center">
-      <div class="md:col-span-2 fade-in-up">
-        <div class="relative">
-          <div class="absolute -inset-1 bg-white/5 rounded-2xl blur-sm"></div>
-          <div class="relative rounded-2xl overflow-hidden border border-white/10" style="aspect-ratio: 1 / 1">
-            <picture>
-              <source srcset="/images/album/cover-small.webp" type="image/webp" />
-              <img
-                src="/images/album/cover-small.png"
-                alt="Inesperado contratiempo — Álbum de LLLIT por Camila Bravo"
-                class="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
+  <!-- Sticker amarillo (desktop, flotante) -->
+  <div
+    data-sticker
+    aria-hidden="true"
+    class="absolute right-6 top-10 z-20 hidden -rotate-6 select-none border-2 border-black bg-[#fde047] px-4 py-2 text-center shadow-[4px_4px_0_rgba(0,0,0,0.6)] lg:block"
+  >
+    <p class="font-mono text-[10px] font-bold uppercase leading-tight tracking-[0.18em] text-black">
+      Out 04 · 09
+    </p>
+    <p class="font-mono text-[8px] uppercase leading-tight tracking-[0.25em] text-black/60">
+      Bandcamp Friday
+    </p>
+  </div>
+
+  <div class="relative z-10 mx-auto max-w-7xl px-5 py-20 sm:px-8 lg:py-28">
+    <!-- Topbar -->
+    <div class="mb-14 flex items-center justify-between border-b border-white/10 pb-3">
+      <span class="font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">
+        [ LLLIT — Nuevo Lanzamiento ]
+      </span>
+      <span class="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-white/25 sm:block">
+        Release // 04 · 09 · 2026
+      </span>
+    </div>
+
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <!-- Portada -->
+      <div class="lg:col-span-5">
+        <div class="relative" data-cover-wrap>
+          <div class="absolute -left-3 -top-3 hidden h-6 w-6 items-center justify-center font-mono text-sm text-white/40 sm:flex" aria-hidden="true">+</div>
+          <div class="absolute -right-3 -top-3 hidden h-6 w-6 items-center justify-center font-mono text-sm text-white/40 sm:flex" aria-hidden="true">+</div>
+          <div class="absolute -bottom-3 -left-3 hidden h-6 w-6 items-center justify-center font-mono text-sm text-white/40 sm:flex" aria-hidden="true">+</div>
+          <div class="absolute -bottom-3 -right-3 hidden h-6 w-6 items-center justify-center font-mono text-sm text-white/40 sm:flex" aria-hidden="true">+</div>
+
+          <div class="relative border-2 border-white/15 bg-[#111] p-2" data-cover-frame>
+            <div class="relative overflow-hidden" style="aspect-ratio: 1 / 1">
+              <picture>
+                <source srcset="/images/album/cover-small.webp" type="image/webp" />
+                <img
+                  src="/images/album/cover-small.png"
+                  alt="Inesperado contratiempo — Álbum de LLLIT por Camila Bravo"
+                  class="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </picture>
+              <!-- Scanline sutil sobre la tapa -->
+              <div
+                class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.22)_0px,rgba(0,0,0,0.22)_1px,transparent_1px,transparent_3px)]"
+                aria-hidden="true"
+              ></div>
+            </div>
+            <div class="flex items-center justify-between px-1 pt-2 font-mono text-[9px] uppercase tracking-[0.2em] text-white/30">
+              <span>LLLIT — IC/26</span>
+              <span>Side A</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="md:col-span-3 fade-in-up">
-        <p class="text-[11px] tracking-[0.15em] uppercase text-white/40 mb-2 font-medium">
-          LLLIT
+      <!-- Contenido -->
+      <div class="lg:col-span-7">
+        <p data-anim class="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-amber-300/90">
+          /// minimal dub · ambient · experimental
         </p>
-        <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.95] tracking-tighter mb-4">
+
+        <h2
+          id="album-title"
+          class="text-5xl font-bold uppercase leading-[0.9] tracking-tighter sm:text-6xl lg:text-7xl xl:text-8xl"
+        >
           Inesperado<br />contratiempo
         </h2>
 
-        <div class="flex flex-wrap gap-3 mb-6">
-          <span class="text-[11px] tracking-[0.12em] uppercase text-white/50 px-3 py-1.5 border border-white/10 rounded-full">
-            Bandcamp Friday
+        <p data-anim class="mt-6 max-w-xl text-sm leading-relaxed text-white/50">
+          Minimal dub, psychedelic ambient y electrónica experimental. El regreso de
+          LLLIT tras 18 meses de silencio. Arte de tapa por Camila Bravo.
+        </p>
+
+        <!-- Badges -->
+        <div data-anim class="mt-7 flex flex-wrap gap-2">
+          <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ Bandcamp Friday ]</span>
+          <span class="border border-amber-300/30 bg-amber-300/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200/90">[ 04 · 09 · 2026 ]</span>
+          <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ NYP $8 USD ]</span>
+          <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ 5 Tracks ]</span>
+        </div>
+
+        <!-- Countdown -->
+        <div data-countdown class="mt-8 flex items-center justify-between border border-white/10 bg-white/[0.02] px-4 py-3">
+          <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">
+            Out in
           </span>
-          <span class="text-[11px] tracking-[0.12em] uppercase text-amber-200/70 px-3 py-1.5 border border-amber-200/20 rounded-full">
-            04 · 09 · 2026
-          </span>
-          <span class="text-[11px] tracking-[0.12em] uppercase text-white/50 px-3 py-1.5 border border-white/10 rounded-full">
-            NYP $8 USD
+          <span data-countdown-value class="font-mono text-sm tabular-nums text-amber-200/90">
+            --d --h --m --s
           </span>
         </div>
 
-        <p class="text-sm text-white/50 leading-relaxed max-w-lg mb-8">
-          Minimal dub, psychedelic ambient y electrónica experimental. El regreso de LLLIT tras 18 meses de silencio. Arte de tapa por Camila Bravo.
-        </p>
-
-        <div class="mb-8">
-          <h3 class="text-[10px] tracking-[0.18em] uppercase text-white/30 mb-3 pb-2 border-b border-white/[0.06]">
-            Tracklist
+        <!-- Tracklist -->
+        <div class="mt-10">
+          <h3 class="mb-2 flex justify-between border-b border-white/10 pb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/40">
+            <span>Tracklist</span>
+            <span class="text-white/25">BPM</span>
           </h3>
-          <div class="space-y-1">
-            {tracks.map((t) => (
-              <div class="flex items-center gap-2 py-2 border-b border-white/[0.04] group hover:border-white/10 transition-colors">
-                {t.previewUrl ? (
-                  <AudioPreview src={t.previewUrl} trackName={t.name} />
-                ) : (
-                  <span class="w-7 shrink-0 text-[11px] text-white/30 font-mono text-center">{t.num}</span>
-                )}
-                <span class="text-sm text-white/80 group-hover:text-white transition-colors flex-1">{t.name}</span>
-                <span class="text-[11px] text-white/30 font-mono tabular-nums">{t.bpm}</span>
-                <div class="h-[2px] w-14 bg-white/5 rounded overflow-hidden shrink-0 hidden sm:block">
-                  <div class="h-full bg-white/30 rounded" style={`width: ${t.pct}%`}></div>
+          <div data-tracklist>
+            {
+              tracks.map((t) => (
+                <div
+                  data-track
+                  class="group grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 border-b border-white/[0.06] py-2.5"
+                >
+                  <span class="font-mono text-[11px] text-white/30">{t.num}</span>
+                  <div class="min-w-0">
+                    <p class="truncate text-sm text-white/80 transition-colors group-hover:text-amber-200">
+                      {t.name}
+                    </p>
+                    <div class="mt-1.5 h-[3px] w-20 overflow-hidden bg-white/10 sm:w-24">
+                      <div
+                        data-bar
+                        data-pct={t.pct}
+                        class="h-full bg-white/40 transition-colors group-hover:bg-amber-300"
+                        style={`width: ${t.pct}%`}
+                      ></div>
+                    </div>
+                  </div>
+                  <span class="font-mono text-[11px] tabular-nums text-white/40">{t.bpm}</span>
                 </div>
-              </div>
-            ))}
+              ))
+            }
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 mb-8 max-w-md">
-          {[
-            { role: "Música / Producción", name: "LLLIT (Matias)" },
-            { role: "Arte de tapa", name: "Camila Bravo" },
-            { role: "Voz", name: "Camila Bravo + Ignacia" },
-            { role: "Visuales", name: "LLLIT (TouchDesigner)" },
-          ].map((c) => (
-            <div class="px-3 py-2 bg-white/[0.02] border border-white/[0.06] rounded-md">
-              <p class="text-[9px] tracking-[0.12em] uppercase text-white/30 mb-0.5">{c.role}</p>
-              <p class="text-xs font-medium text-white/70">{c.name}</p>
-            </div>
-          ))}
+        <!-- Créditos -->
+        <div data-credits class="mt-10 grid grid-cols-1 gap-px border border-white/10 bg-white/10 sm:grid-cols-2">
+          {
+            credits.map((c) => (
+              <div class="bg-[#0a0a0a] px-4 py-3">
+                <p class="font-mono text-[9px] uppercase tracking-[0.2em] text-white/30">{c.role}</p>
+                <p class="mt-0.5 text-xs font-medium text-white/70">{c.name}</p>
+              </div>
+            ))
+          }
         </div>
 
-        <div class="flex flex-wrap gap-3">
+        <!-- CTAs -->
+        <div data-anim class="mt-10 flex flex-wrap items-center gap-3">
           <a
             href="https://lllit3.bandcamp.com"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/10 hover:bg-white/15 border border-white/15 hover:border-white/25 rounded-full transition-all"
+            class="inline-flex items-center gap-2 border-2 border-[#fde047] bg-[#fde047] px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-black transition-colors hover:bg-transparent hover:text-[#fde047]"
           >
-            <span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
-            Bandcamp
+            <span aria-hidden="true">[</span>
+            Escuchar en Bandcamp
+            <span aria-hidden="true">]</span>
           </a>
           <a
-            href="https://instagram.com/lllit_3"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all"
+            href="/album/inesperado-contratiempo"
+            class="inline-flex items-center gap-2 border border-white/20 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.12em] text-white/60 transition-colors hover:border-white/50 hover:text-white"
           >
-            @lllit_3
-          </a>
-          <a
-            href="https://youtube.com/channel/UC6wQ3-lBuQLiYK32uUVhHcw"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all"
-          >
-            YouTube
-          </a>
-          <a
-            href="https://soundcloud.com/lllit_3"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium tracking-[0.08em] uppercase bg-white/[0.04] hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all"
-          >
-            SoundCloud
+            Ver página del álbum
+            <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
 
-        <a
-          href="/album/inesperado-contratiempo"
-          class="inline-flex items-center gap-1.5 text-[11px] tracking-[0.1em] uppercase text-white/40 hover:text-white/70 transition-colors mt-6"
-        >
-          Ver página completa del álbum
-          <span class="text-white/20">&rarr;</span>
-        </a>
+        <!-- Redes -->
+        <div data-anim class="mt-7 flex flex-wrap gap-x-6 gap-y-2">
+          {
+            links.map((l) => (
+              <a
+                href={l.href}
+                target={l.external ? "_blank" : undefined}
+                rel={l.external ? "noopener noreferrer" : undefined}
+                class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35 transition-colors hover:text-white"
+              >
+                {l.label}
+              </a>
+            ))
+          }
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<style is:global>
+  /* Los spans los inyecta SplitText en runtime → deben ser globales,
+     pero van namespaced bajo .album-promo para no filtrar al resto del sitio. */
+  .album-promo .split-line {
+    display: block;
+    overflow: hidden;
+  }
+  .album-promo .split-char {
+    display: inline-block;
+    will-change: transform;
+  }
+</style>
+
 <script>
   import { gsap } from "gsap"
   import { ScrollTrigger } from "gsap/ScrollTrigger"
-  gsap.registerPlugin(ScrollTrigger)
+  import { SplitText } from "gsap/SplitText"
 
-  gsap.from(".fade-in-up", {
-    y: 60,
-    opacity: 0,
-    duration: 0.8,
-    stagger: 0.15,
-    ease: "power2.out",
-    scrollTrigger: {
-      trigger: "#album",
-      start: "top 75%",
-      toggleActions: "play none none none",
-    },
-  })
+  gsap.registerPlugin(ScrollTrigger, SplitText)
+
+  const section = document.getElementById("album")
+  if (section) {
+    gsap.context(() => {
+      const mm = gsap.matchMedia()
+
+      // ── Usuario con prefers-reduced-motion: todo estático ──
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        const countEl = section.querySelector("[data-countdown-value]")
+        if (countEl) countEl.textContent = "04 · 09 · 2026"
+        return () => {}
+      })
+
+      // ── Motion completo (solo si el usuario no pidió reducirlo) ──
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const isDesktop = window.matchMedia("(min-width: 1024px)").matches
+
+        // Split del título por caracteres, enmascarado por línea
+        const split = new SplitText("#album-title", {
+          type: "chars,lines",
+          charsClass: "split-char",
+          linesClass: "split-line",
+        })
+
+        // Parallax del fondo
+        gsap.fromTo(
+          "[data-bg-visual]",
+          { yPercent: -8 },
+          {
+            yPercent: 8,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        )
+
+        // Rotación sutil de la portada al scrollear
+        gsap.to("[data-cover-frame]", {
+          rotation: 2.5,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        })
+
+        // Revelado de la portada (clip + entrada lateral)
+        gsap.from("[data-cover-frame]", {
+          clipPath: "inset(0 100% 0 0)",
+          xPercent: -4,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: section, start: "top 72%" },
+        })
+
+        // Coreografía del contenido
+        const tl = gsap.timeline({
+          scrollTrigger: { trigger: section, start: "top 72%" },
+        })
+
+        tl.from(".split-char", {
+            yPercent: 110,
+            rotation: 6,
+            autoAlpha: 0,
+            duration: 0.65,
+            stagger: 0.02,
+            ease: "power3.out",
+          })
+          .from(
+            "[data-anim]",
+            {
+              y: 26,
+              autoAlpha: 0,
+              duration: 0.6,
+              stagger: 0.1,
+              ease: "power3.out",
+            },
+            0.35
+          )
+          .from(
+            "[data-countdown]",
+            {
+              y: 20,
+              autoAlpha: 0,
+              duration: 0.5,
+              ease: "power2.out",
+            },
+            0.7
+          )
+          .from(
+            "[data-track]",
+            {
+              y: 14,
+              autoAlpha: 0,
+              duration: 0.4,
+              stagger: 0.06,
+              ease: "power2.out",
+            },
+            0.8
+          )
+          .from(
+            "[data-bar]",
+            {
+              scaleX: 0,
+              transformOrigin: "left center",
+              duration: 0.5,
+              stagger: 0.05,
+              ease: "power2.out",
+            },
+            1.1
+          )
+          .from(
+            "[data-credits] > *",
+            {
+              y: 12,
+              autoAlpha: 0,
+              duration: 0.35,
+              stagger: 0.05,
+              ease: "power2.out",
+            },
+            1.3
+          )
+          .from(
+            "[data-sticker]",
+            {
+              scale: 0,
+              rotation: -30,
+              autoAlpha: 0,
+              duration: 0.5,
+              ease: "back.out(2)",
+            },
+            1.5
+          )
+
+        // Flotación del sticker (solo desktop)
+        if (isDesktop) {
+          gsap.to("[data-sticker]", {
+            y: 12,
+            rotation: 4,
+            duration: 2.6,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+            delay: 2,
+          })
+        }
+
+        // Hover de tracks: la barra se expande hasta 100% y vuelve
+        section.querySelectorAll("[data-track]").forEach((row) => {
+          const bar = row.querySelector("[data-bar]")
+          if (!bar) return
+          const pct = parseFloat(bar.dataset.pct || "50") || 50
+          row.addEventListener("mouseenter", () => {
+            gsap.to(bar, {
+              scaleX: 100 / pct,
+              transformOrigin: "left center",
+              duration: 0.35,
+              ease: "power2.out",
+            })
+          })
+          row.addEventListener("mouseleave", () => {
+            gsap.to(bar, {
+              scaleX: 1,
+              transformOrigin: "left center",
+              duration: 0.35,
+              ease: "power2.out",
+            })
+          })
+        })
+
+        // Countdown a la fecha de lanzamiento (04 · 09 · 2026)
+        const target = Date.UTC(2026, 8, 4)
+        const countEl = section.querySelector("[data-countdown-value]")
+        const pad = (n) => String(n).padStart(2, "0")
+        const tick = () => {
+          if (!countEl) return
+          const diff = target - Date.now()
+          if (diff <= 0) {
+            countEl.textContent = "out now"
+            gsap.ticker.remove(tick)
+            return
+          }
+          const d = Math.floor(diff / 86400000)
+          const h = Math.floor(diff / 3600000) % 24
+          const m = Math.floor(diff / 60000) % 60
+          const s = Math.floor(diff / 1000) % 60
+          countEl.textContent = `${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`
+        }
+        tick()
+        gsap.ticker.add(tick)
+
+        return () => {
+          gsap.ticker.remove(tick)
+          split.revert()
+        }
+      })
+    }, section)
+  }
 </script>

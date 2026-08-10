@@ -3,43 +3,84 @@ import FormIcono from "@/assets/svg_icon/form.svg";
 import IGIcono from "@/assets/svg_icon/ig.svg";
 import MailIcono from "@/assets/svg_icon/mail.svg";
 ---
-
-<!-- FOOTER? -->
-<footer class="border-t p-6">
+<!--
+  Footer — Cierre de todas las páginas.
+  Estética Y2K Brutalista / editorial experimental (misma dirección que
+  HeaderShared / ThemeToggle / FAQ):
+    - tokens de tema (--surface / --ink / --muted / --line / --color-neon)
+    - separador chunky: border-t-2 sólido sobre la superficie del tema
+    - iconos SVG heredan el color del tema via currentColor (fill:#fff → currentColor)
+    - hover neón en iconos y links, links mono uppercase
+    - entrada GSAP on-load con stagger, matchMedia + prefers-reduced-motion
+-->
+<footer
+  class="border-t-2 border-[var(--line)] bg-[var(--surface)] text-[var(--ink)]"
+  data-footer
+>
   <div class="w-full z-9999 relative">
-    <div class="flex justify-between h-full">
-      <button
-        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+    <div class="flex justify-between h-full px-5 sm:px-8 pt-8">
+      <a
+        href="/formulario"
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110 hover:text-neon text-[var(--ink)]"
+        aria-label="Contacto — formulario"
       >
-        <a href="/formulario" target="" rel="noopener noreferrer"
-          ><FormIcono class="w-15 h-15" />
-        </a>
-      </button>
-      <button
-        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+        <FormIcono class="w-15 h-15" />
+      </a>
+      <a
+        href="https://www.instagram.com/lllit_3/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110 hover:text-neon text-[var(--ink)]"
+        aria-label="Instagram de LLLIT"
       >
-        <a
-          href="https://www.instagram.com/lllit_3/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <IGIcono class="w-15 h-15" />
-        </a>
-      </button>
-      <button
-        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+        <IGIcono class="w-15 h-15" />
+      </a>
+      <a
+        href="mailto:lllit@mtsprz.org"
+        class="z-9999 cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110 hover:text-neon text-[var(--ink)]"
+        aria-label="Escribir a LLLIT por email"
       >
-        <a href="mailto:lllit@mtsprz.org">
-          <MailIcono class="w-15 h-15" />
-        </a>
-      </button>
+        <MailIcono class="w-15 h-15" />
+      </a>
     </div>
-    <div class="flex justify-center mt-6 gap-6 text-[10px] tracking-[0.12em] uppercase">
-      <a href="/redeem" class="text-white/30 hover:text-white/70 transition-colors">Canjear código</a>
-      <span class="text-white/10">·</span>
-      <a href="/album" class="text-white/30 hover:text-white/70 transition-colors">Discografía</a>
-      <span class="text-white/10">·</span>
-      <a href="/prices" class="text-white/30 hover:text-white/70 transition-colors">Precios</a>
+    <div
+      class="flex justify-center mt-6 pb-6 gap-6 font-mono text-[10px] tracking-[0.12em] uppercase text-[var(--muted)]"
+    >
+      <a href="/redeem" class="hover:text-neon transition-colors duration-150">Canjear código</a>
+      <span aria-hidden="true">·</span>
+      <a href="/album" class="hover:text-neon transition-colors duration-150">Discografía</a>
+      <span aria-hidden="true">·</span>
+      <a href="/prices" class="hover:text-neon transition-colors duration-150">Precios</a>
     </div>
   </div>
 </footer>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    [data-footer] a {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from "gsap";
+
+  const footerLinks = document.querySelectorAll<HTMLElement>("[data-footer] a");
+
+  const mm = gsap.matchMedia();
+
+  // Usuario con prefers-reduced-motion: todo estático (estado final por defecto)
+  mm.add("(prefers-reduced-motion: reduce)", () => {});
+
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    if (!footerLinks.length) return;
+    gsap.from(footerLinks, {
+      y: 16,
+      opacity: 0,
+      duration: 0.5,
+      ease: "power2.out",
+      stagger: 0.06,
+    });
+  });
+</script>

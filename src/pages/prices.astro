@@ -13,39 +13,104 @@ import Footer from "@/components/Footer.astro";
   canonicalUrl="https://lllitmts.vercel.app/prices"
 >
   <HeaderShared />
-  <PricingSection />
+  <PricingSection level={1} />
 
-  <section class="bg-[#111] text-white px-5 sm:px-8 py-20 max-w-3xl mx-auto" data-content-visibility>
-    <h2 class="text-2xl sm:text-3xl font-bold tracking-tighter mb-10 text-center">
-      Preguntas frecuentes
-    </h2>
-    <div class="space-y-8">
-      <div>
-        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Qué es el mapping visual?</h3>
-        <p class="text-sm text-white/50 leading-relaxed">
-          El mapping visual (proyección mapping o video mapping) es una técnica que proyecta imágenes y animaciones sobre estructuras reales (edificios, objetos, escenarios) para transformarlas visualmente. Se usa en shows en vivo, eventos y presentaciones artísticas.
-        </p>
+  <!-- FAQ — Y2K Brutalist (tokens + neon) -->
+  <section
+    id="faq"
+    class="bg-[var(--surface)] text-[var(--ink)] px-5 sm:px-8 py-20 sm:py-28"
+  >
+    <div class="mx-auto max-w-3xl">
+      <!-- Header editorial -->
+      <header class="border-b-2 border-[var(--line)] pb-8">
+        <div class="flex items-center justify-between gap-4">
+          <p class="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-neon">
+            [ FAQ / Dudas ]
+          </p>
+          <p class="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--muted)] sm:block">
+            4 preguntas · respuestas directas
+          </p>
+        </div>
+        <h2
+          id="faq-title"
+          class="mt-5 text-[clamp(2.25rem,7vw,4.5rem)] font-bold uppercase leading-[0.9] tracking-tighter"
+        >
+          Preguntas<br />frecuentes<span class="text-neon">.</span>
+        </h2>
+      </header>
+
+      <!-- Preguntas -->
+      <div class="divide-y-2 divide-[var(--line)]">
+        <div class="faq-item group py-6">
+          <h3 class="flex items-baseline gap-3 sm:gap-4">
+            <span class="shrink-0 font-mono text-xs font-bold tabular-nums text-neon">[01]</span>
+            <span class="font-bold uppercase tracking-tight text-base sm:text-lg transition-colors duration-150 group-hover:bg-neon group-hover:text-black">
+              ¿Qué es el mapping visual?
+            </span>
+          </h3>
+          <p class="mt-3 pl-8 sm:pl-12 text-sm sm:text-base leading-relaxed text-[var(--muted)]">
+            El mapping visual (proyección mapping o video mapping) es una técnica que proyecta imágenes y animaciones sobre estructuras reales (edificios, objetos, escenarios) para transformarlas visualmente. Se usa en shows en vivo, eventos y presentaciones artísticas.
+          </p>
+        </div>
+
+        <div class="faq-item group py-6">
+          <h3 class="flex items-baseline gap-3 sm:gap-4">
+            <span class="shrink-0 font-mono text-xs font-bold tabular-nums text-neon">[02]</span>
+            <span class="font-bold uppercase tracking-tight text-base sm:text-lg transition-colors duration-150 group-hover:bg-neon group-hover:text-black">
+              ¿Qué software usa LLLIT?
+            </span>
+          </h3>
+          <p class="mt-3 pl-8 sm:pl-12 text-sm sm:text-base leading-relaxed text-[var(--muted)]">
+            TouchDesigner, una plataforma de programación visual para contenido interactivo en tiempo real. Permite crear visuals generativos, reaccionar a audio y controlar proyecciones en vivo.
+          </p>
+        </div>
+
+        <div class="faq-item group py-6">
+          <h3 class="flex items-baseline gap-3 sm:gap-4">
+            <span class="shrink-0 font-mono text-xs font-bold tabular-nums text-neon">[03]</span>
+            <span class="font-bold uppercase tracking-tight text-base sm:text-lg transition-colors duration-150 group-hover:bg-neon group-hover:text-black">
+              ¿Cuál es la diferencia entre con y sin proyector?
+            </span>
+          </h3>
+          <p class="mt-3 pl-8 sm:pl-12 text-sm sm:text-base leading-relaxed text-[var(--muted)]">
+            Sin proyector ($70,000 ARS): llevás tu propio proyector o usamos el del venue. Con proyector ($120,000 ARS): incluye proyector láser de alto brillo ideal para espacios sin equipo disponible.
+          </p>
+        </div>
+
+        <div class="faq-item group py-6">
+          <h3 class="flex items-baseline gap-3 sm:gap-4">
+            <span class="shrink-0 font-mono text-xs font-bold tabular-nums text-neon">[04]</span>
+            <span class="font-bold uppercase tracking-tight text-base sm:text-lg transition-colors duration-150 group-hover:bg-neon group-hover:text-black">
+              ¿Hacen VJ en vivo?
+            </span>
+          </h3>
+          <p class="mt-3 pl-8 sm:pl-12 text-sm sm:text-base leading-relaxed text-[var(--muted)]">
+            Sí, LLLIT ofrece sesiones de VJ en vivo con control en tiempo real, ideales para fiestas, festivales y presentaciones de música electrónica.
+          </p>
+        </div>
       </div>
-      <div>
-        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Qué software usa LLLIT?</h3>
-        <p class="text-sm text-white/50 leading-relaxed">
-          TouchDesigner, una plataforma de programación visual para contenido interactivo en tiempo real. Permite crear visuals generativos, reaccionar a audio y controlar proyecciones en vivo.
-        </p>
-      </div>
-      <div>
-        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Cuál es la diferencia entre con y sin proyector?</h3>
-        <p class="text-sm text-white/50 leading-relaxed">
-          Sin proyector ($70,000 ARS): llevás tu propio proyector o usamos el del venue. Con proyector ($120,000 ARS): incluye proyector láser de alto brillo ideal para espacios sin equipo disponible.
-        </p>
-      </div>
-      <div>
-        <h3 class="text-sm font-semibold tracking-wide text-white/80 mb-2">¿Hacen VJ en vivo?</h3>
-        <p class="text-sm text-white/50 leading-relaxed">
-          Sí, LLLIT ofrece sesiones de VJ en vivo con control en tiempo real, ideales para fiestas, festivales y presentaciones de música electrónica.
-        </p>
+
+      <!-- CTA -->
+      <div class="mt-10 border-2 border-[var(--line)]">
+        <a
+          href="/formulario"
+          class="faq-cta group flex items-center justify-between gap-4 px-5 py-4 font-mono text-xs sm:text-sm font-bold uppercase tracking-widest transition-colors duration-150 hover:bg-neon hover:text-black"
+        >
+          <span>¿Otra duda? Escríbenos</span>
+          <span class="transition-transform duration-150 group-hover:translate-x-1" aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
   </section>
+
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      .faq-item span,
+      .faq-cta span {
+        transition: none;
+      }
+    }
+  </style>
 
   <Footer />
 </Layout>
@@ -89,9 +154,67 @@ import Footer from "@/components/Footer.astro";
   ]
 })} />
 
-<style>
-  html,
-  body {
-    height: 100vh;
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import SplitType from "split-type";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // FAQ — coreografía propia, scoped a esta sección.
+  // Sin prefers-reduced-motion: reduce no se oculta nada (progressive enhancement).
+  const faqEl = document.getElementById("faq");
+  if (faqEl && window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+    const mm = gsap.matchMedia();
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // Título: revelado por caracteres, el punto se mantiene en neon.
+      const titleSplit = new SplitType("#faq-title", { types: "chars" });
+      titleSplit.chars.forEach((char) => {
+        if (char.textContent === ".") char.classList.add("text-neon");
+      });
+
+      gsap.from(titleSplit.chars, {
+        yPercent: 110,
+        autoAlpha: 0,
+        duration: 0.65,
+        stagger: 0.02,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: faqEl,
+          start: "top 75%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // Items: entrada escalonada.
+      gsap.from(".faq-item", {
+        y: 24,
+        autoAlpha: 0,
+        duration: 0.55,
+        stagger: 0.08,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: faqEl,
+          start: "top 65%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      // CTA.
+      gsap.from(".faq-cta", {
+        y: 16,
+        autoAlpha: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".faq-cta",
+          start: "top 92%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      return () => titleSplit.revert();
+    });
   }
-</style>
+</script>

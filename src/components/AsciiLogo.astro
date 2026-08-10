@@ -1,0 +1,23 @@
+---
+/**
+ * AsciiLogo — Wordmark ASCII "LLLIT"
+ * Presentacional: sin JS, sin props obligatorias.
+ * Uso: <AsciiLogo class="..." />  (class se pasa al <pre>)
+ */
+interface Props {
+  class?: string;
+  ariaHidden?: boolean;
+}
+
+const { class: className = "", ariaHidden = true } = Astro.props;
+---
+
+<pre
+  class:list={["font-mono leading-none tracking-tighter select-none", className]}
+  aria-hidden={ariaHidden ? "true" : undefined}
+>█       █       █       █       ████████
+█       █       █       █       █
+█       █       █       █       █
+█       █       █       █       █
+█       █       █       █       █
+██████  ██████  ██████  ██████  █</pre>

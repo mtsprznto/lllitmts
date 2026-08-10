@@ -1,22 +1,25 @@
 ---
-// Puedes agregar lógica aquí si lo necesitás
 import HeaderShared from "@/components/HeaderShared.astro";
 import Layout from "@/layouts/Layout.astro";
+import Footer from "@/components/Footer.astro";
 import FormularioComponets from "@/components/FormularioComponents/FormularioComponets.astro";
 ---
 
 <Layout
+  hideKeepScrolling
   title="LLLIT — Contacto | Booking mapping visual y música"
   description="Contactate con LLLIT para booking de mapping visual en vivo, música, eventos y colaboraciones."
   ogTitle="LLLIT — Contacto"
   ogDescription="Contactate con LLLIT para booking de mapping visual en vivo."
   canonicalUrl="https://lllitmts.vercel.app/formulario"
+  breadcrumbs={[
+    { name: "LLLIT", url: "/" },
+    { name: "Contacto", url: "/formulario" },
+  ]}
 >
   <HeaderShared />
-  <main>
-    <h1 class="sr-only text-white text-2xl">LLLIT — Contacto y booking para mapping visual, VJ y música</h1>
-    <FormularioComponets />
-  </main>
+  <FormularioComponets />
+  <Footer />
 </Layout>
 
 <script type="application/ld+json" set:html={JSON.stringify({
@@ -33,10 +36,3 @@ import FormularioComponets from "@/components/FormularioComponents/FormularioCom
     "url": "https://lllitmts.vercel.app"
   }
 })} />
-
-<style>
-  html,
-  body {
-    height: 100vh;
-  }
-</style>

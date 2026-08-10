@@ -142,6 +142,19 @@ const finalStructuredData = structuredData || defaultStructuredData
         }]
       }
     </script>
+
+    <!-- Theme init: evita FOUC (flash de tema incorrecto) -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var theme = stored === "light" ? "light" : "dark"; // default dark (sitio actual)
+          var root = document.documentElement;
+          root.classList.toggle("dark", theme === "dark");
+          root.style.colorScheme = theme;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <slot />
@@ -153,10 +166,14 @@ const finalStructuredData = structuredData || defaultStructuredData
     <style is:global>
       @import "tailwindcss";
 
+      /* Dark mode por clase (el toggle añade/remueve .dark en <html>) */
+      @custom-variant dark (&:where(.dark, .dark *));
+
       @theme {
         --font-sans: "Poppins", "Roboto", "sans-serif";
         --font-narrow: "GTANarrow", system-ui, sans-serif;
         --animate-bounce-pulse: bounce-pulse 2s ease-in-out infinite;
+        --color-neon: #ffff00;
       }
 
       @keyframes bounce-pulse {
@@ -165,11 +182,25 @@ const finalStructuredData = structuredData || defaultStructuredData
         100% { transform: translateY(0); scale: 0.8; opacity: 0.8; }
       }
 
+      /* Tokens de tema — la superficie de cada sección consume estas vars */
+      :root {
+        --surface: #ffffff;
+        --ink: #000000;
+        --muted: rgba(0, 0, 0, 0.6);
+        --line: #000000;
+      }
+      .dark {
+        --surface: #111111;
+        --ink: #ffffff;
+        --muted: rgba(255, 255, 255, 0.6);
+        --line: #ffffff;
+      }
+
       html {
-        background: #111;
+        background: var(--surface);
         overflow-x: clip;
         overscroll-behavior: none;
-        color: white;
+        color: var(--ink);
         scroll-behavior: smooth;
       }
 

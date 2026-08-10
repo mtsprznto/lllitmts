@@ -1,118 +1,229 @@
 ---
 // src/components/PricingSection.astro
 import CardDetalles from "./PricingComponts/CardDetalles.astro";
+
+interface Props {
+  /** 1 = página de precios (h1), 2 = home (h2) */
+  level?: 1 | 2;
+}
+
+const { level = 2 } = Astro.props;
+const HeadingTag = level === 1 ? "h1" : "h2";
+const ColHeading = level === 1 ? "h2" : "h3";
 ---
 
-<section id="section4" class="min-h-screen w-full bg-[#111111] text-white">
-  <main class="p-6 h-full">
-    <div>
-      <h1 class="text-[1rem] md:text-[3rem] font-bold mt-3">PRECIOS</h1>
-    </div>
-
-    <div class="w-full h-full grid grid-cols-1 md:grid-cols-2 gap-6 mt-1">
-      <!-- SIN PROYECTOR -->
-      <div class="w-full z-9999">
-        <h2
-          class="text-[2rem] md:text-[4rem] mb-0 font-semibold tracking-tight"
-          id="sin_proyector"
+<!-- id="section4" lo usa HomePrincipal (scrollToSection) — no renombrar -->
+<section id="section4" class="bg-[var(--surface)] px-5 py-20 text-[var(--ink)] sm:px-8 sm:py-28">
+  <div class="mx-auto max-w-6xl">
+    <!-- Header editorial -->
+    <header class="border-b-2 border-[var(--line)] pb-8">
+      <div class="flex items-center justify-between gap-4">
+        <p class="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-neon">
+          [ Precios / Mapping ]
+        </p>
+        <p class="hidden font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--muted)] sm:block">
+          4 planes · reserva 40%
+        </p>
+      </div>
+      <div class="mt-5 flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+        <HeadingTag
+          id="pricing-title"
+          class="text-[clamp(2.5rem,8vw,6rem)] font-bold uppercase leading-[0.85] tracking-tighter"
         >
-          SIN PROYECTOR
-        </h2>
-        <CardDetalles
-          title="Mapping Accesible Normal"
-          detalle="Mapping en estructuras predeterminadas, No live VJ."
-          hardware="Dell, 8Gb Ram, Radeon Graphics AMD, No GPU"
-          proyector="No incluye proyector"
-          precio="$70.000"
-        />
-        <CardDetalles
-          title="Mapping Accesible Medium"
-          detalle="Mapping en estructuras predeterminadas, Live VJ."
-          hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
-          proyector="No incluye proyector"
-          precio="$100.000"
-        />
+          Precios<span class="text-neon">.</span>
+        </HeadingTag>
+        <p
+          class="price-badge inline-block rotate-3 border-2 border-[var(--line)] bg-neon px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-black shadow-[2px_2px_0_#000]"
+        >
+          ● Desde $70.000
+        </p>
+      </div>
+    </header>
+
+    <!-- Grid de columnas -->
+    <div class="mt-10 grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-6">
+      <!-- SIN PROYECTOR -->
+      <div class="price-col min-w-0">
+        <ColHeading
+          id="sin_proyector"
+          class="price-col-title mb-6 text-[1.75rem] font-bold uppercase leading-none tracking-tight sm:text-[2.5rem]"
+        >
+          Sin <span class="text-neon">proyector</span>
+        </ColHeading>
+        <div class="flex flex-col gap-5">
+          <CardDetalles
+            index={1}
+            title="Mapping Accesible Normal"
+            detalle="Mapping en estructuras predeterminadas, No live VJ."
+            hardware="Dell, 8Gb Ram, Radeon Graphics AMD, No GPU"
+            proyector="No incluye proyector"
+            precio="$70.000"
+          />
+          <CardDetalles
+            index={2}
+            title="Mapping Accesible Medium"
+            detalle="Mapping en estructuras predeterminadas, Live VJ."
+            hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
+            proyector="No incluye proyector"
+            precio="$100.000"
+          />
+        </div>
       </div>
 
       <!-- CON PROYECTOR -->
-      <div class="w-full z-9999">
-        <h2
-          class="text-[2rem] md:text-[4rem] mb-0 font-semibold tracking-tight"
+      <div class="price-col min-w-0">
+        <ColHeading
           id="con_proyector"
+          class="price-col-title mb-6 text-[1.75rem] font-bold uppercase leading-none tracking-tight sm:text-[2.5rem]"
         >
-          CON PROYECTOR
-        </h2>
-
-        <CardDetalles
-          title="Mapping Accesible Normal + Proyector"
-          detalle="Mapping en estructuras predeterminadas, No live VJ."
-          hardware="Dell, 8Gb Ram, Radeon Graphics AMD, No GPU"
-          proyector="Proyector 4200 Lúmenes"
-          precio="$120.000"
-        />
-
-        <CardDetalles
-          title="Mapping Accesible v2 + Proyector"
-          detalle="Mapping en estructuras predeterminadas, Live VJ."
-          hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
-          proyector="Proyector 3200 Lúmenes"
-          precio="$140.000"
-        />
-        <CardDetalles
-          title="Accesible Medium + Proyector"
-          detalle="Mapping en estructuras predeterminadas, Live VJ."
-          hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
-          proyector="Proyector 4200 Lúmenes"
-          precio="$160.000"
-        />
+          Con <span class="text-neon">proyector</span>
+        </ColHeading>
+        <div class="flex flex-col gap-5">
+          <CardDetalles
+            index={1}
+            title="Mapping Accesible Normal + Proyector"
+            detalle="Mapping en estructuras predeterminadas, No live VJ."
+            hardware="Dell, 8Gb Ram, Radeon Graphics AMD, No GPU"
+            proyector="Proyector 4200 Lúmenes"
+            precio="$120.000"
+          />
+          <CardDetalles
+            index={2}
+            title="Mapping Accesible v2 + Proyector"
+            detalle="Mapping en estructuras predeterminadas, Live VJ."
+            hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
+            proyector="Proyector 3200 Lúmenes"
+            precio="$140.000"
+          />
+          <CardDetalles
+            index={3}
+            title="Accesible Medium + Proyector"
+            detalle="Mapping en estructuras predeterminadas, Live VJ."
+            hardware="Lenovo Legion, 24Gb Ram, AMD Ryzen 5 5600H with Radeon Graphics 3.30 GHz, NVIDIA GeForce RTX 3060"
+            proyector="Proyector 4200 Lúmenes"
+            precio="$160.000"
+          />
+        </div>
       </div>
     </div>
-  </main>
 
-  <div class="flex flex-col h-full w-full align-end justify-end items-end">
+    <!-- Barra de reserva -->
     <div
-      class="relative w-full align-end justify-end border-t border-b p-3 items-end"
+      class="price-reserve mt-12 flex flex-col gap-1 border-2 border-[var(--line)] px-5 py-4 font-mono text-[0.7rem] uppercase tracking-widest text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between sm:text-xs"
     >
-      <p class="">Todos los precios NO incluyen transporte.</p>
-      <p>
-        Para reserva depositar el 40% del precio total (mínimo 2 semanas antes).
+      <p class="text-[var(--ink)]">
+        Todos los precios <span class="text-neon">NO</span> incluyen transporte.
       </p>
+      <p>Para reserva depositar el 40% del precio total (mínimo 2 semanas antes).</p>
     </div>
   </div>
 </section>
 
 <script>
   import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
   import SplitType from "split-type";
-  const sin_proyector = new SplitType("#sin_proyector", {
-    types: "words,chars",
-  });
-  const con_proyector = new SplitType("#con_proyector", {
-    types: "words,chars",
-  });
 
-  sin_proyector.chars.forEach((char, index) => {
-    let chatsT2 = gsap.timeline();
+  gsap.registerPlugin(ScrollTrigger);
 
-    char.addEventListener("mouseenter", () => {
-      gsap.to(char, {
-        color: `rgb(${gsap.utils.random(0, 255)},${gsap.utils.random(
-          0,
-          255
-        )},${gsap.utils.random(0, 255)})`,
+  const PALETTE = ["#f472b6", "#22d3ee", "#a78bfa", "#d8b4fe", "#ffff00"];
+  const section = document.getElementById("section4");
+
+  if (section) {
+    const mm = gsap.matchMedia();
+
+    // Coreografía de entrada — solo si el usuario no pide reduced-motion.
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const titleEl = document.getElementById("pricing-title");
+      let titleSplit = null;
+      if (titleEl) {
+        titleSplit = new SplitType(titleEl, { types: "chars" });
+        titleSplit.chars.forEach((char) => {
+          if (char.textContent === ".") char.classList.add("text-neon");
+        });
+        gsap.from(titleSplit.chars, {
+          yPercent: 110,
+          autoAlpha: 0,
+          duration: 0.65,
+          stagger: 0.02,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        });
+      }
+
+      gsap.from(".price-col", {
+        y: 40,
+        autoAlpha: 0,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 60%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      gsap.from(".price-badge", {
+        scale: 0.6,
+        autoAlpha: 0,
+        duration: 0.5,
+        ease: "back.out(2)",
+        scrollTrigger: {
+          trigger: section,
+          start: "top 70%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      gsap.from(".price-reserve", {
+        y: 16,
+        autoAlpha: 0,
+        duration: 0.5,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".price-reserve",
+          start: "top 92%",
+          toggleActions: "play none none none",
+        },
+      });
+
+      return () => {
+        titleSplit?.revert();
+      };
+    });
+
+    // Hover de títulos de columna: neon estático + color aleatorio de paleta.
+    // Solo color (sin movimiento) → seguro también con reduced-motion.
+    ["sin_proyector", "con_proyector"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const split = new SplitType(el, { types: "words,chars" });
+      split.words.forEach((word) => {
+        if (word.textContent.trim().toLowerCase() === "proyector") {
+          word.classList.add("text-neon");
+        }
+      });
+      split.chars.forEach((char) => {
+        char.addEventListener("mouseenter", () => {
+          gsap.to(char, {
+            color: PALETTE[gsap.utils.random(0, PALETTE.length - 1, 1)],
+            duration: 0.25,
+          });
+        });
+        char.addEventListener("mouseleave", () => {
+          const targetColor = getComputedStyle(char.parentElement).color;
+          gsap.to(char, {
+            color: targetColor,
+            duration: 0.3,
+            onComplete: () => gsap.set(char, { clearProps: "color" }),
+          });
+        });
       });
     });
-  });
-  con_proyector.chars.forEach((char, index) => {
-    let chatsT2 = gsap.timeline();
-
-    char.addEventListener("mouseenter", () => {
-      gsap.to(char, {
-        color: `rgb(${gsap.utils.random(0, 255)},${gsap.utils.random(
-          0,
-          255
-        )},${gsap.utils.random(0, 255)})`,
-      });
-    });
-  });
+  }
 </script>

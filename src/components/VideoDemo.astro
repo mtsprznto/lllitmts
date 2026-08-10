@@ -1,79 +1,68 @@
-<!-- Sección 3 -->
-<section id="section3" class="min-h-screen w-full bg-[#111111] text-white">
-  <main class="relative w-full opacity-0" id="section2">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        <video
-          src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2ao5NjdlBxwDBNugMZPXJEvp0y4TAnQUIaYjmt"
-          muted
-          autoplay
-          playsinline
-          preload="metadata"
-          class="object-cover w-full rounded-lg shadow-md"
-          loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2a6YRBfFpTWqZh3j5kzx6mfJDuHBOIb9vtK2lr"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2abYalxJ80RB1iKWFEGymkutdJY7LCAVcD4sgS"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2aEWreaub0JKQkeLYOzA3ZxBoNaDMimHPW6vCF"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2aT8lIrODImSJkv0lXAEaKN3qpP7uBe624x5fh"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2azs0h346HIoFm2gfGW4YuNn0xPvjUhreaS5J9"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2a2DBOEadCVt6eklq5uzWX71SIwL9JP3DdEgjO"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2akXbwQ1nVMZW4qPw0iTy8HOuYmAbcnzeBDCfI"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-      <video
-        src="https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2azQaAYZ6HIoFm2gfGW4YuNn0xPvjUhreaS5J9"
-        muted
-        autoplay
-        playsinline
-        preload="auto"
-        class="object-cover w-full rounded-lg shadow-md"
-        loop></video>
-    </div>
-  </main>
+---
+/**
+ * VideoDemo — Sección 3 · Showreel / grilla de videos demo
+ * Estética alineada con SectionInfo (Y2K Brutalista):
+ *   - Eyebrow mono + título gigante fluido
+ *   - VideoGrid con captions e índices
+ *   - Barra de sección con enlace "volver arriba"
+ * El markup queda visible por defecto (progressive enhancement).
+ * La entrada escalonada se orquesta desde index.astro vía
+ * ScrollTrigger sobre `#section3-videos [data-video-item]`.
+ */
+import VideoGrid from "./VideoGrid.astro";
+
+const videos = [
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2ao5NjdlBxwDBNugMZPXJEvp0y4TAnQUIaYjmt",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2a6YRBfFpTWqZh3j5kzx6mfJDuHBOIb9vtK2lr",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2abYalxJ80RB1iKWFEGymkutdJY7LCAVcD4sgS",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2aEWreaub0JKQkeLYOzA3ZxBoNaDMimHPW6vCF",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2aT8lIrODImSJkv0lXAEaKN3qpP7uBe624x5fh",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2azs0h346HIoFm2gfGW4YuNn0xPvjUhreaS5J9",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2a2DBOEadCVt6eklq5uzWX71SIwL9JP3DdEgjO",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2akXbwQ1nVMZW4qPw0iTy8HOuYmAbcnzeBDCfI",
+  "https://6bq1d1k7on.ufs.sh/f/78XjxKUMCV2azQaAYZ6HIoFm2gfGW4YuNn0xPvjUhreaS5J9",
+];
+
+const captions = videos.map((_, i) => `DEMO ${String(i + 1).padStart(2, "0")}`);
+---
+
+<!-- Sección 3 · Showreel -->
+<section
+  id="section3"
+  class="min-h-screen w-full bg-[var(--surface)] text-[var(--ink)]"
+>
+  <div class="w-full px-4 sm:px-8 py-16 sm:py-24">
+    <!-- Encabezado de sección -->
+    <p
+      class="font-mono text-[0.7rem] sm:text-xs font-bold uppercase tracking-[0.35em] text-[var(--muted)] mb-4"
+    >
+      [ Showreel ]
+    </p>
+    <h2
+      class="font-bold uppercase leading-[0.9] tracking-tighter mb-10 sm:mb-14"
+      style="font-size: clamp(2.4rem, 8vw, 6.5rem);"
+    >
+      Demos<span class="text-neon">.</span>
+    </h2>
+
+    <VideoGrid
+      videos={videos}
+      captions={captions}
+      id="section3-videos"
+      class="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+    />
+  </div>
+
+  <!-- Barra de sección -->
+  <footer
+    class="flex items-center justify-between gap-3 border-t-2 border-[var(--line)] px-4 sm:px-8 py-4 font-mono text-[0.7rem] sm:text-xs font-bold uppercase tracking-widest text-[var(--muted)]"
+  >
+    <span>9 TAKES</span>
+    <a
+      href="#section1"
+      class="underline decoration-2 underline-offset-4 hover:text-neon hover:decoration-neon transition-colors"
+    >
+      [ Volver arriba ]
+    </a>
+  </footer>
 </section>

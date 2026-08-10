@@ -1,0 +1,426 @@
+---
+/**
+ * VideoGrid — Grilla de videos reutilizable + lightbox full-screen, estética Y2K Brutalista.
+ * Props:
+ *  - videos: string[]          (URLs de video UploadThing)
+ *  - captions?: string[]       (títulos por video, opcional)
+ *  - id?: string               (id del contenedor; también habilita el lightbox)
+ *  - class?: string            (clases extra sobre la grilla)
+ *  - interactive?: boolean     (hover zoom + overlay caption; default true)
+ *
+ * Lightbox (requiere `id`):
+ *  - Click en un video => overlay a pantalla completa (z-50), SIEMPRE silenciado al abrir.
+ *  - [ Minimizar ] / ESC / click fuera del marco => vuelve a la grilla.
+ *  - [ Anterior ] / [ Siguiente ] (o flechas ←/→) => navegación cíclica.
+ *  - [ Sound ] / [ Mute ] => alterna sonido (por defecto apagado).
+ *  - Click en el video dentro del lightbox => play/pause.
+ *  - Script genérico multi-instancia (data-video-lightbox + data-grid-id);
+ *    no depende de define:vars y convive con la coreografía GSAP de la página.
+ */
+interface Props {
+  videos: string[];
+  captions?: string[];
+  id?: string;
+  class?: string;
+  interactive?: boolean;
+}
+
+const {
+  videos,
+  captions,
+  id,
+  class: className = "",
+  interactive = true,
+} = Astro.props;
+
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+<div
+  id={id}
+  class:list={[
+    "grid w-full gap-3 sm:gap-5",
+    "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    className,
+  ]}
+>
+  {
+    videos.map((src, i) => (
+      <figure
+        data-video-item
+        class:list={[
+          "group relative overflow-hidden border-2 border-[var(--line)] bg-[var(--surface)]",
+          "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--line)]",
+          interactive && "cursor-pointer",
+        ]}
+      >
+        <div class="relative aspect-video overflow-hidden bg-black">
+          <video
+            src={src}
+            muted
+            autoplay
+            playsinline
+            preload="metadata"
+            loop
+            class:list={[
+              "absolute inset-0 h-full w-full object-cover",
+              interactive && "transition-transform duration-300 ease-out group-hover:scale-105",
+            ]}
+          />
+          {interactive && (
+            <div
+              aria-hidden="true"
+              class="absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+            >
+              {/* Cuadrícula de scanlines al hover — guiño CRT/VJ */}
+              <div
+                class="absolute inset-0"
+                style="background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,0,0.06) 3px 4px);"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Índice + caption en la caja del marco (sobre fondo sólido) */}
+        <figcaption
+          class="flex items-center justify-between gap-2 px-2.5 py-2 font-mono text-[0.7rem] sm:text-xs font-bold uppercase tracking-widest text-[var(--ink)]"
+        >
+          <span class="tabular-nums opacity-70">[{pad(i + 1)}]</span>
+          <span data-caption class="truncate">{captions?.[i] ?? "VISUAL EN VIVO"}</span>
+        </figcaption>
+      </figure>
+    ))
+  }
+</div>
+
+{
+  id && (
+    <div
+      data-video-lightbox
+      data-grid-id={id}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Reproductor de video"
+      aria-hidden="true"
+      class="video-lb-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+    >
+      {/* Scanlines globales del overlay — CRT/VJ */}
+      <div aria-hidden="true" class="video-lb-scanlines pointer-events-none absolute inset-0" />
+
+      <div class="video-lb-frame relative w-full max-w-5xl">
+        {/* Header: índice + caption + minimizar */}
+        <div
+          class="flex items-center justify-between gap-4 border-2 border-b-0 border-[var(--line)] bg-[var(--surface)] px-3 py-2"
+        >
+          <span
+            data-lb-index
+            class="font-mono text-xs sm:text-sm font-bold uppercase tracking-widest tabular-nums text-neon"
+          >
+            [01 / {pad(videos.length)}]
+          </span>
+          <span
+            data-lb-caption
+            class="truncate font-mono text-xs sm:text-sm font-bold uppercase tracking-widest text-[var(--ink)]"
+          >
+            {captions?.[0] ?? "VISUAL EN VIVO"}
+          </span>
+          <button type="button" data-lb-close class="lb-btn shrink-0">
+            [ Minimizar ]
+          </button>
+        </div>
+
+        {/* Video full-screen (object-contain) + scanlines. La caja adapta su
+            relación de aspecto a la del video real (16/9 o 9/16 vertical) vía
+            --lb-ratio seteado en loadedmetadata. */}
+        <div
+          data-lb-box
+          class="video-lb-box relative border-2 border-[var(--line)] bg-black"
+        >
+          <video
+            data-lb-video
+            class="absolute inset-0 h-full w-full object-contain"
+            playsinline
+            loop
+            preload="metadata"
+            muted
+          />
+          <div aria-hidden="true" class="video-lb-scanlines pointer-events-none absolute inset-0" />
+        </div>
+
+        {/* Footer: navegación cíclica + sonido */}
+        <div
+          class="flex flex-wrap items-center justify-between gap-2 border-2 border-t-0 border-[var(--line)] bg-[var(--surface)] px-3 py-2"
+        >
+          <button type="button" data-lb-prev class="lb-btn">[ Anterior ]</button>
+          <button type="button" data-lb-sound class="lb-btn">[ Sound ]</button>
+          <button type="button" data-lb-next class="lb-btn">[ Siguiente ]</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  /* ---------- Lightbox: overlay ---------- */
+  .video-lb-overlay {
+    background: rgba(0, 0, 0, 0.85);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 200ms ease,
+      visibility 0s linear 200ms;
+  }
+  .video-lb-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 200ms ease;
+  }
+
+  /* ---------- Marco: entrada editorial (sube y se asienta) ---------- */
+  .video-lb-frame {
+    transform: translateY(12px) scale(0.98);
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .video-lb-overlay.is-open .video-lb-frame {
+    transform: translateY(0) scale(1);
+  }
+
+  /* ---------- Caja del video: se adapta a la relación de aspecto real ----------
+     JS setea --lb-ratio tras loadedmetadata (ej. 0.5625 para 9/16 vertical).
+     - 16/9  (ratio 1.7778): max-width = 100% del marco, alto = ancho / ratio.
+     - 9/16  (ratio 0.5625): max-width = 72vh * 0.5625 ≈ 40.5vh, alto = 72vh.
+     Así el video vertical llena su caja (object-contain) en vez de aparecer
+     como tira estrecha en un marco horizontal con barras negras laterales. */
+  .video-lb-box {
+    aspect-ratio: var(--lb-ratio, 16 / 9);
+    max-width: min(100%, calc(72vh * var(--lb-ratio, 16 / 9)));
+    max-height: 72vh;
+    margin-inline: auto; /* centra videos verticales dentro del marco */
+  }
+
+  /* ---------- Botones Y2K ---------- */
+  .lb-btn {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    padding: 0.25rem 0.625rem;
+    background: transparent;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      transform 150ms ease;
+  }
+  .lb-btn:hover {
+    background: var(--color-neon);
+    color: #000;
+  }
+  .lb-btn:active {
+    transform: translate(1px, 1px);
+  }
+  .lb-btn:focus-visible {
+    outline: 2px solid var(--color-neon);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Scanlines CRT ---------- */
+  .video-lb-scanlines {
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgba(255, 255, 0, 0.05) 3px 4px
+    );
+  }
+
+  /* ---------- reduced-motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .video-lb-overlay,
+    .video-lb-overlay.is-open,
+    .video-lb-frame,
+    .video-lb-overlay.is-open .video-lb-frame,
+    .lb-btn {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Reproductor lightbox Y2K — multi-instancia.
+   * Cada overlay [data-video-lightbox] se asocia a su grilla por data-grid-id
+   * y resuelve los [data-video-item] desde el grid en tiempo de ejecución
+   * (no usa define:vars, así convive con múltiples instancias y con GSAP).
+   */
+  document.querySelectorAll("[data-video-lightbox]").forEach((overlay) => {
+    const gridId = overlay.dataset.gridId;
+    const grid = gridId ? document.getElementById(gridId) : null;
+    if (!grid) return;
+
+    const items = Array.from(grid.querySelectorAll("[data-video-item]"));
+
+    // Refuerzo de silencio: los videos de la grilla SIEMPRE muted, incluso si
+    // el navegador ignora el atributo HTML tras una interacción del usuario.
+    items.forEach((item) => {
+      const v = item.querySelector("video");
+      if (v) {
+        v.muted = true;
+        v.defaultMuted = true;
+      }
+    });
+
+    const video = overlay.querySelector("[data-lb-video]");
+    const indexEl = overlay.querySelector("[data-lb-index]");
+    const captionEl = overlay.querySelector("[data-lb-caption]");
+    const closeBtn = overlay.querySelector("[data-lb-close]");
+    const prevBtn = overlay.querySelector("[data-lb-prev]");
+    const nextBtn = overlay.querySelector("[data-lb-next]");
+    const soundBtn = overlay.querySelector("[data-lb-sound]");
+    const box = overlay.querySelector("[data-lb-box]");
+    if (!video || !closeBtn || !prevBtn || !nextBtn || !soundBtn || items.length === 0) return;
+
+    const captions = items.map((item) => {
+      const cap = item.querySelector("[data-caption]");
+      return cap ? cap.textContent.trim() : "VISUAL EN VIVO";
+    });
+
+    const pad = (n) => String(n).padStart(2, "0");
+    const state = {
+      current: -1,
+      playing: false,
+      soundOn: false,
+      lastFocused: null,
+      prevOverflow: "",
+    };
+
+    const pauseGrid = () =>
+      items.forEach((item) => {
+        const v = item.querySelector("video");
+        if (v) v.pause();
+      });
+    const playGrid = () =>
+      items.forEach((item) => {
+        const v = item.querySelector("video");
+        if (v) {
+          v.muted = true;
+          v.defaultMuted = true;
+          v.play().catch(() => {});
+        }
+      });
+
+    // Ajusta la caja a la relación de aspecto real del video (16/9 por defecto).
+    // Sin esto, un video vertical 9/16 dentro del marco 16/9 quedaba como tira
+    // estrecha centrada con barras negras laterales.
+    const fitBox = () => {
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+      if (!w || !h || !box) return;
+      box.style.setProperty("--lb-ratio", (w / h).toFixed(4));
+    };
+    video.addEventListener("loadedmetadata", fitBox);
+
+    const renderMeta = () => {
+      if (indexEl) indexEl.textContent = `[${pad(state.current + 1)} / ${pad(items.length)}]`;
+      if (captionEl) captionEl.textContent = captions[state.current] ?? "VISUAL EN VIVO";
+      soundBtn.textContent = state.soundOn ? "[ Mute ]" : "[ Sound ]";
+    };
+
+    const load = (i) => {
+      const item = items[i];
+      const src = item ? item.querySelector("video")?.getAttribute("src") : null;
+      state.current = i;
+      video.muted = !state.soundOn;
+      if (src && video.getAttribute("src") !== src) video.setAttribute("src", src);
+      video.load();
+      video
+        .play()
+        .then(() => {
+          state.playing = true;
+        })
+        .catch(() => {
+          state.playing = false;
+        });
+      renderMeta();
+    };
+
+    const open = (item) => {
+      const i = items.indexOf(item);
+      if (i === -1) return;
+      state.lastFocused = document.activeElement;
+      state.prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      pauseGrid();
+      overlay.setAttribute("aria-hidden", "false");
+      overlay.classList.add("is-open");
+      load(i);
+      closeBtn.focus();
+    };
+
+    const close = () => {
+      video.pause();
+      state.playing = false;
+      state.soundOn = false; // siempre silenciado al abrir
+      video.muted = true;
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = state.prevOverflow;
+      playGrid();
+      if (state.lastFocused instanceof HTMLElement) state.lastFocused.focus();
+      state.current = -1;
+      renderMeta();
+    };
+
+    const next = () => load((state.current + 1) % items.length);
+    const prev = () => load((state.current - 1 + items.length) % items.length);
+
+    grid.addEventListener("click", (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      const item = target ? target.closest("[data-video-item]") : null;
+      if (!item) return;
+      e.preventDefault();
+      open(item);
+    });
+
+    closeBtn.addEventListener("click", close);
+    prevBtn.addEventListener("click", prev);
+    nextBtn.addEventListener("click", next);
+
+    soundBtn.addEventListener("click", () => {
+      state.soundOn = !state.soundOn;
+      video.muted = !state.soundOn;
+      renderMeta();
+    });
+
+    video.addEventListener("click", () => {
+      if (state.playing) {
+        video.pause();
+        state.playing = false;
+      } else {
+        video
+          .play()
+          .then(() => {
+            state.playing = true;
+          })
+          .catch(() => {});
+      }
+    });
+
+    // Clic fuera del marco => minimizar
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close();
+    });
+
+    // Teclado: ESC minimiza, ←/→ navega (solo con el lightbox abierto)
+    document.addEventListener("keydown", (e) => {
+      if (!overlay.classList.contains("is-open")) return;
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowRight") next();
+      else if (e.key === "ArrowLeft") prev();
+    });
+  });
+</script>

@@ -1,0 +1,55 @@
+---
+/**
+ * AsciiCanvas — Capa de fondo con arte matricial ASCII ($, +, /, |).
+ * Generado en build (SSR) con un PRNG determinístico para output estable.
+ * La capa es puramente decorativa (aria-hidden) y se anima con parallax
+ * desde el script (ScrollTrigger + scrub). reduced-motion => estática.
+ */
+interface Props {
+  rows?: number;
+  cols?: number;
+  class?: string;
+}
+
+const { rows = 26, cols = 96, class: className = "" } = Astro.props;
+
+const GLYPHS = ["$", "+", "/", "|", ".", ":", "*"];
+
+// PRNG determinístico (mulberry32) — mismo output en cada build
+function mulberry32(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const rand = mulberry32(0x4c4c4944); // "LLLIT"
+const grid = Array.from({ length: rows }, () =>
+  Array.from({ length: cols }, () => GLYPHS[Math.floor(rand() * GLYPHS.length)])
+).join("\n");
+---
+
+<div
+  aria-hidden="true"
+  data-ascii-canvas
+  class:list={[
+    "pointer-events-none select-none absolute inset-0 overflow-hidden font-mono leading-none",
+    "text-[0.55rem] sm:text-[0.65rem] md:text-[0.75rem]",
+    "text-[var(--muted)] opacity-25 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_45%,#000_30%,transparent_78%)]",
+    "will-change-transform",
+    className,
+  ]}
+>
+  <pre class="block whitespace-pre w-full h-[130%] -top-[15%] relative">{grid}</pre>
+</div>
+
+<style>
+  /* El scroll anima transform: translateY — solo compositor.
+     Layout+paint containment: el overflow del pre no afecta al layout. */
+  [data-ascii-canvas] {
+    contain: layout paint;
+  }
+</style>
