@@ -39,7 +39,7 @@ export const albums: Album[] = [
     slug: "inesperado-contratiempo",
     title: "Inesperado contratiempo",
     artist: "LLLIT",
-    releaseDate: "2026-09-04",
+    releaseDate: "2026-10-02",
     label: "LLLIT Records",
     description: "Minimal dub, psychedelic ambient y electrónica experimental. El regreso de LLLIT tras 18 meses de silencio. Arte de tapa por Camila Bravo.",
     descriptionEn: "Minimal dub, psychedelic ambient, and experimental electronics. LLLIT returns after 18 months of silence. Artwork by Camila Bravo.",
@@ -60,13 +60,13 @@ export const albums: Album[] = [
     credits: [
       { role: "Música / Producción", name: "LLLIT (Matias)" },
       { role: "Arte de tapa", name: "Camila Bravo" },
-      { role: "Voz", name: "Camila Bravo + Ignacia" },
+      { role: "Voz", name: "Camola + Groovidub" },
       { role: "Visuales", name: "LLLIT (TouchDesigner)" },
     ],
     genres: ["Minimal dub", "Psychedelic ambient", "Experimental electronic"],
     price: "$8 USD",
     releaseType: "Bandcamp Friday",
-    campaignDate: "04 · 09 · 2026",
+    campaignDate: "02 · 10 · 2026",
   },
 ]
 
