@@ -1,0 +1,89 @@
+---
+import type { Album } from "@/data/albums"
+
+interface Props {
+  album: Album
+}
+
+const { album } = Astro.props
+const links = album.streamLinks ?? []
+const primary = links.filter((l) => l.primary)
+const rest = links.filter((l) => !l.primary)
+const order = [...primary, ...rest]
+---
+
+{
+  links.length > 0 && (
+    <section data-linkhub class="mt-16 border-t border-white/[0.06] pt-10" aria-label="Stream y enlaces">
+      <h2
+        data-linkhub-header
+        class="mb-6 font-mono text-[10px] uppercase tracking-[0.25em] text-white/55"
+      >
+        /// Stream / links
+      </h2>
+
+      <div class="flex flex-wrap items-stretch gap-3">
+        {order.map((l) =>
+          l.primary ? (
+            <a
+              data-linkhub-item
+              href={l.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex flex-col items-center justify-center gap-0.5 border-2 border-[#fde047] bg-[#fde047] px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-black transition-colors hover:bg-transparent hover:text-[#fde047]"
+            >
+              <span>
+                {l.label}
+                <span aria-hidden="true"> ↗</span>
+              </span>
+              {l.note && <span class="text-[8px] font-normal tracking-[0.1em] opacity-70">{l.note}</span>}
+            </a>
+          ) : (
+            <a
+              data-linkhub-item
+              href={l.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex flex-col items-center justify-center gap-0.5 border border-white/20 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.12em] text-white/60 transition-colors hover:border-white/50 hover:text-white"
+            >
+              <span>
+                {l.label}
+                <span aria-hidden="true"> ↗</span>
+              </span>
+              {l.note && <span class="text-[8px] tracking-[0.1em] text-white/35">{l.note}</span>}
+            </a>
+          )
+        )}
+      </div>
+
+      <div data-linkhub-item class="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+        <a
+          href={album.instagramUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40 transition-colors hover:text-white"
+        >
+          {album.instagramHandle}
+        </a>
+        <a
+          href={album.soundcloudUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40 transition-colors hover:text-white"
+        >
+          SoundCloud
+        </a>
+      </div>
+
+      <div data-linkhub-item class="mt-5">
+        <a
+          href="/redeem"
+          class="inline-flex items-center gap-2 border border-white/20 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.12em] text-white/60 transition-colors hover:border-white/50 hover:text-white"
+        >
+          ¿Código promocional? Canjealo
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </section>
+  )
+}

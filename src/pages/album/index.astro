@@ -97,7 +97,7 @@ const structuredData = {
       </div>
 
       <!-- Header editorial -->
-      <header class="mb-16 md:mb-20 max-w-3xl">
+      <header class="mb-16 md:mb-20">
         <p data-anim class="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-amber-300/90">
           /// {genreLabel.toLowerCase()}
         </p>
@@ -107,15 +107,17 @@ const structuredData = {
         >
           Discografía
         </h1>
-        <p data-anim class="mt-6 max-w-xl text-sm leading-relaxed text-white/50">
+        <p data-anim class="mt-6 max-w-2xl text-sm leading-relaxed text-white/50">
           {albums.length} {albums.length === 1 ? "lanzamiento" : "lanzamientos"} · cinta maestra,
-          vinilo y Bandcamp Friday. {albums[0]?.description}
+          vinilo y Bandcamp Friday.
+        </p>
+        <p data-anim class="mt-3 text-sm leading-relaxed text-white/50">
+          {albums[0]?.description}
         </p>
 
         <!-- Badges -->
         <div data-anim class="mt-7 flex flex-wrap gap-2">
           <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ {albums.length} Lanzamientos ]</span>
-          <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ Vinilo ]</span>
           <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ NYP ]</span>
           <span class="border border-amber-300/30 bg-amber-300/5 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-amber-200/90">[ 2026 ]</span>
         </div>

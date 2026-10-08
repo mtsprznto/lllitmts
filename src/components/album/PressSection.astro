@@ -1,0 +1,95 @@
+---
+import type { Album } from "@/data/albums"
+
+interface Props {
+  album: Album
+}
+
+const { album } = Astro.props
+const press = album.press ?? []
+const pullquotes = press.filter((p) => p.quote)
+const rows = press.filter((p) => !p.quote)
+
+const kindLabel: Record<string, string> = {
+  review: "review",
+  feature: "feedback",
+  share: "share",
+}
+
+const formatDate = (iso: string) => {
+  const [y, m, d] = iso.split("-")
+  return `${d} · ${m} · ${y}`
+}
+---
+
+{
+  press.length > 0 && (
+    <section data-press-section class="mt-16 border-t border-white/[0.06] pt-10" aria-label="Press 2026">
+      <h2
+        data-press-header
+        class="mb-6 font-mono text-[10px] uppercase tracking-[0.25em] text-white/55"
+      >
+        /// Press 2026
+      </h2>
+
+      {pullquotes.map((p) => (
+        <figure data-press-item class="mb-7 border-l-2 border-[#fde047] pl-4">
+          <blockquote class="max-w-2xl text-sm italic leading-relaxed text-white/60">
+            “{p.quote}”
+          </blockquote>
+          <figcaption class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] uppercase tracking-[0.2em]">
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-amber-200/90 transition-colors hover:text-amber-100"
+            >
+              {p.outlet}
+              <span aria-hidden="true"> ↗</span>
+            </a>
+            <span class="text-white/40">[{kindLabel[p.kind] ?? p.kind}]</span>
+            {p.date && (
+              <time datetime={p.date} class="text-white/30">
+                {formatDate(p.date)}
+              </time>
+            )}
+          </figcaption>
+        </figure>
+      ))}
+
+      {rows.length > 0 && (
+        <ul class="mt-2">
+          {rows.map((p) => (
+            <li
+              data-press-item
+              class="flex items-center justify-between gap-3 border-b border-white/[0.06] py-2.5"
+            >
+              <div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                <a
+                  href={p.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm text-white/80 transition-colors hover:text-amber-200"
+                >
+                  {p.outlet}
+                  <span aria-hidden="true"> ↗</span>
+                </a>
+                <span class="font-mono text-[9px] uppercase tracking-[0.2em] text-white/40">
+                  [{kindLabel[p.kind] ?? p.kind}]
+                </span>
+                {p.date && (
+                  <time datetime={p.date} class="font-mono text-[9px] tabular-nums text-white/30">
+                    {formatDate(p.date)}
+                  </time>
+                )}
+              </div>
+              <span aria-hidden="true" class="shrink-0 font-mono text-[11px] text-white/40">
+                →
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}

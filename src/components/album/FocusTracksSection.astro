@@ -1,0 +1,35 @@
+---
+import type { Album } from "@/data/albums"
+
+interface Props {
+  album: Album
+}
+
+const { album } = Astro.props
+const focus = album.focusTracks ?? []
+---
+
+{
+  focus.length > 0 && (
+    <section data-focus-section class="mt-16 border-t border-white/[0.06] pt-10" aria-label="Focus tracks">
+      <h2
+        data-focus-header
+        class="mb-4 font-mono text-[10px] uppercase tracking-[0.25em] text-white/55"
+      >
+        /// Focus tracks
+      </h2>
+
+      {focus.map((t) => (
+        <article data-focus-item class="border-b border-white/[0.06] py-5">
+          <div class="flex items-baseline gap-3">
+            <span class="font-mono text-[11px] tabular-nums text-white/40">{t.num}</span>
+            <h3 class="font-mono text-sm uppercase tracking-[0.14em] text-amber-200/90">
+              {t.name}
+            </h3>
+          </div>
+          <p class="mt-2 max-w-2xl text-sm leading-relaxed text-white/50">{t.blurb}</p>
+        </article>
+      ))}
+    </section>
+  )
+}

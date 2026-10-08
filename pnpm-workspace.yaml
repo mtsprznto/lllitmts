@@ -1,5 +1,7 @@
 allowBuilds:
   esbuild: false
+minimumReleaseAgeExclude:
+  - astro@7.3.7
 # pnpm 11+ reads settings ONLY from pnpm-workspace.yaml
 # (the "pnpm" field in package.json is ignored since pnpm 11).
 # See https://pnpm.io/settings
@@ -10,11 +12,33 @@ allowBuilds:
 # with "The requested module 'js-yaml' does not provide an export named 'default'".
 overrides:
   esbuild: '>=0.28.1'
-  brace-expansion: '>=5.0.9'
-  js-yaml: '>=4.3.1 <5'
+  # GHSA-qhr7-859c-m2p7 / GHSA-6j4f-fj2g-mc7p (high): DoS via uncontrolled
+  # recursion (nested brace groups / parseCommaParts). Path:
+  # @astrojs/vercel > @vercel/nft > glob > minimatch > brace-expansion.
+  brace-expansion: '>=5.0.12'
+  # GHSA-2883-xcg3-v3hh (high): maxTotalMergeKeys CPU exhaustion.
+  # Keep <5 (js-yaml 5 is ESM-only, breaks `import yaml from 'js-yaml'` in astro).
+  js-yaml: '>=4.3.2 <5'
   postcss: '>=8.5.23'
-  sharp: '>=0.35.0'
+  # GHSA-rgj7-g3m4-5g8c + GHSA-g89c-p67h-r497 / GHSA-2jg2-4ch7-h545 (high):
+  # libheif CVEs. astro optionalDependency sharp ^0.35.4.
+  sharp: '>=0.35.5'
   tar: '>=7.5.21'
   # GHSA-9wv6-86v2-598j (high): path-to-regexp <6.3.0 backtracking ReDoS
   # via @astrojs/vercel>@vercel/routing-utils. Force the patched version.
   path-to-regexp: '>=6.3.0'
+  # --- Security overrides added 2026-10-08 ---
+  # GHSA-j22f-vq7h-c4qm, GHSA-mcm9-63f2-9j32, GHSA-x5rw-q4pp-hg5g (high),
+  # GHSA-hx4r-w6wj-j8fg, GHSA-4q55-j62x-fr9h (moderate): astro requires
+  # ^5.8.1; pin the patched 5.9.3+ (keep <6, astro 7 is on the 5.x line).
+  devalue: '>=5.9.4 <6'
+  # GHSA-w27v-7q3p-w38r (high): svgo removeScripts bypass. astro requires ^4.0.1.
+  svgo: '>=4.1.0'
+  # GHSA-7w5x-hrqm-74c2 (high): smol-toml DoS. via @astrojs/internal-helpers.
+  smol-toml: '>=1.9.0'
+  # GHSA-68fv-2mgg-jv7q (high): source-map-js event-loop DoS
+  # (transitive build-time path).
+  source-map-js: '>=1.2.2'
+  # GHSA-ch52-4w7c-c8xp (high): http-cache-semantics cache poisoning.
+  # astro still requires ^4.2.0 even at 7.3.x, so force 4.2.1+.
+  http-cache-semantics: '>=4.2.1'

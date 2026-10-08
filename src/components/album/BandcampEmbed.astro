@@ -1,0 +1,33 @@
+---
+import type { Album } from "@/data/albums"
+
+interface Props {
+  album: Album
+}
+
+const { album } = Astro.props
+const albumId = album.bandcampAlbumId
+
+// PRD_002: embed literal del usuario, data-driven (params sin tocar)
+const embedSrc = albumId
+  ? `https://bandcamp.com/EmbeddedPlayer/album=${albumId}/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/artwork=small/transparent=true/`
+  : null
+---
+
+{
+  embedSrc && (
+    <div class="mt-8" data-bandcamp-embed>
+      <iframe
+        style="border: 0; width: 100%; height: 120px;"
+        src={embedSrc}
+        title={`${album.title} by ${album.artist} — reproductor de Bandcamp`}
+        loading="lazy"
+        seamless
+      >
+        <a href={album.bandcampUrl}>
+          {album.title} by {album.artist}
+        </a>
+      </iframe>
+    </div>
+  )
+}

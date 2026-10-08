@@ -3,6 +3,10 @@ import Layout from "@/layouts/Layout.astro"
 import HeaderShared from "@/components/HeaderShared.astro"
 import Footer from "@/components/Footer.astro"
 import AudioPreview from "@/components/AudioPreview.astro"
+import FocusTracksSection from "@/components/album/FocusTracksSection.astro"
+import PressSection from "@/components/album/PressSection.astro"
+import LinkhubSection from "@/components/album/LinkhubSection.astro"
+import BandcampEmbed from "@/components/album/BandcampEmbed.astro"
 import { getAlbumBySlug, type Album } from "@/data/albums"
 
 const { slug } = Astro.params
@@ -17,6 +21,10 @@ const getWebpUrl = (url: string) => url.replace(/\.png$/, ".webp").replace(/\.jp
 const getAvifUrl = (url: string) => url.replace(/\.png$/, ".avif").replace(/\.jpg$/, ".avif")
 const FULL_COVER_URL = `${SITE_URL}${album.coverUrl}`
 const trackCount = album.tracks.length
+
+// PRD-001 §4: countdown vencido → estado "Out now" server-rendered (idempotente en cliente)
+const releaseTs = Date.parse(`${album.releaseDate}T00:00:00Z`)
+const isReleased = Number.isFinite(releaseTs) && Date.now() >= releaseTs
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -192,13 +200,31 @@ const structuredData = {
             <span class="border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">[ {trackCount} Tracks ]</span>
           </div>
 
-          <!-- Countdown -->
-          <div data-countdown class="mt-8 flex items-center justify-between border border-white/10 bg-white/[0.02] px-4 py-3">
-            <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">
-              Out in
+          <!-- Countdown (PRD-001 §4: si ya salió, estado "Out now" server-rendered) -->
+          <div
+            data-countdown
+            data-countdown-target={releaseTs}
+            data-bandcamp={album.bandcampUrl}
+            class="mt-8 flex items-center justify-between border border-white/10 bg-white/[0.02] px-4 py-3"
+          >
+            <span data-countdown-label class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">
+              {isReleased ? "Out now" : "Out in"}
             </span>
             <span data-countdown-value class="font-mono text-sm tabular-nums text-amber-200/90">
-              --d --h --m --s
+              {
+                isReleased ? (
+                  <a
+                    href={album.bandcampUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="underline underline-offset-4 transition-colors hover:text-white"
+                  >
+                    stream / buy
+                  </a>
+                ) : (
+                  "--d --h --m --s"
+                )
+              }
             </span>
           </div>
 
@@ -240,6 +266,9 @@ const structuredData = {
             </div>
           </div>
 
+          <!-- Reproductor incrustado (PRD_002) -->
+          <BandcampEmbed album={album} />
+
           <!-- Créditos -->
           <div data-credits class="mt-10 grid grid-cols-1 gap-px border border-white/10 bg-white/10 sm:grid-cols-2">
             {
@@ -251,57 +280,13 @@ const structuredData = {
               ))
             }
           </div>
-
-          <!-- CTAs -->
-          <div data-anim class="mt-10 flex flex-wrap items-center gap-3">
-            <a
-              href={album.bandcampUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-2 border-2 border-[#fde047] bg-[#fde047] px-5 py-2.5 font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-black transition-colors hover:bg-transparent hover:text-[#fde047]"
-            >
-              <span aria-hidden="true">[</span>
-              Pre-order en Bandcamp
-              <span aria-hidden="true">]</span>
-            </a>
-            <a
-              href="/redeem"
-              class="inline-flex items-center gap-2 border border-white/20 px-5 py-2.5 font-mono text-[11px] uppercase tracking-[0.12em] text-white/60 transition-colors hover:border-white/50 hover:text-white"
-            >
-              ¿Código promocional? Canjealo
-              <span aria-hidden="true">&rarr;</span>
-            </a>
-          </div>
-
-          <!-- Redes -->
-          <div data-anim class="mt-7 flex flex-wrap gap-x-6 gap-y-2">
-            <a
-              href={album.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35 transition-colors hover:text-white"
-            >
-              {album.instagramHandle}
-            </a>
-            <a
-              href={album.youtubeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35 transition-colors hover:text-white"
-            >
-              YouTube
-            </a>
-            <a
-              href={album.soundcloudUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35 transition-colors hover:text-white"
-            >
-              SoundCloud
-            </a>
-          </div>
         </div>
       </div>
+
+      <!-- Bloques editoriales PRD-001 (A/B/C) -->
+      <FocusTracksSection album={album} />
+      <PressSection album={album} />
+      <LinkhubSection album={album} />
 
       <!-- Volver -->
       <div class="mt-24 text-center">
@@ -332,12 +317,29 @@ const structuredData = {
   const page = document.getElementById("album-page")
   if (page) {
     gsap.context(() => {
+      // PRD-001 §4: estado "Out now" idempotente (server-rendered o al vencer el countdown)
+      const markReleased = () => {
+        const label = page.querySelector("[data-countdown-label]")
+        const val = page.querySelector("[data-countdown-value]")
+        const bc = page.querySelector("[data-countdown]")?.getAttribute("data-bandcamp")
+        if (label) label.textContent = "Out now"
+        if (val && bc) {
+          val.innerHTML = `<a href="${bc}" target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 transition-colors hover:text-white">stream / buy</a>`
+        }
+      }
+
       const mm = gsap.matchMedia()
 
       // ── Usuario con prefers-reduced-motion: todo estático ──
       mm.add("(prefers-reduced-motion: reduce)", () => {
-        const countEl = page.querySelector("[data-countdown-value]")
-        if (countEl) countEl.textContent = "02 · 10 · 2026"
+        const attr = page.querySelector("[data-countdown]")?.getAttribute("data-countdown-target")
+        const target = attr ? Number(attr) : NaN
+        if (Number.isFinite(target) && Date.now() >= target) {
+          markReleased()
+        } else {
+          const countEl = page.querySelector("[data-countdown-value]")
+          if (countEl) countEl.textContent = "02 · 10 · 2026"
+        }
         return () => {}
       })
 
@@ -495,15 +497,65 @@ const structuredData = {
           })
         })
 
-        // Countdown a la fecha de lanzamiento (04 · 09 · 2026)
-        const target = Date.UTC(2026, 9, 2)
+        // ── Bloques editoriales PRD-001 (focus / press / linkhub) ──
+        if (page.querySelector("[data-focus-section]")) {
+          gsap.from("[data-focus-header]", {
+            y: 24,
+            autoAlpha: 0,
+            duration: 0.6,
+            ease: "power3.out",
+          })
+          gsap.from("[data-focus-item]", {
+            y: 16,
+            autoAlpha: 0,
+            stagger: 0.08,
+            duration: 0.45,
+            ease: "power2.out",
+          })
+        }
+        if (page.querySelector("[data-press-section]")) {
+          gsap.from("[data-press-header]", {
+            y: 24,
+            autoAlpha: 0,
+            duration: 0.6,
+            ease: "power3.out",
+          })
+          gsap.from("[data-press-item]", {
+            y: 16,
+            autoAlpha: 0,
+            stagger: 0.08,
+            duration: 0.45,
+            ease: "power2.out",
+          })
+        }
+        if (page.querySelector("[data-linkhub]")) {
+          gsap.from("[data-linkhub-header]", {
+            y: 24,
+            autoAlpha: 0,
+            duration: 0.6,
+            ease: "power3.out",
+          })
+          gsap.from("[data-linkhub-item]", {
+            y: 16,
+            autoAlpha: 0,
+            scale: 0.96,
+            stagger: 0.06,
+            duration: 0.45,
+            ease: "power2.out",
+          })
+        }
+
+        // Countdown a la fecha de lanzamiento (data-countdown-target, server-rendered si ya venció)
+        const box = page.querySelector("[data-countdown]")
+        const targetAttr = box ? box.getAttribute("data-countdown-target") : null
+        const target = targetAttr ? Number(targetAttr) : NaN
         const countEl = page.querySelector("[data-countdown-value]")
-        const pad = (n) => String(n).padStart(2, "0")
+        const pad = (n: number) => String(n).padStart(2, "0")
         const tick = () => {
           if (!countEl) return
           const diff = target - Date.now()
           if (diff <= 0) {
-            countEl.textContent = "out now"
+            markReleased()
             gsap.ticker.remove(tick)
             return
           }
@@ -513,8 +565,14 @@ const structuredData = {
           const s = Math.floor(diff / 1000) % 60
           countEl.textContent = `${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`
         }
-        tick()
-        gsap.ticker.add(tick)
+        if (!Number.isFinite(target)) {
+          // atributo ausente/inválido: nada que contar
+        } else if (Date.now() >= target) {
+          markReleased()
+        } else {
+          tick()
+          gsap.ticker.add(tick)
+        }
 
         return () => {
           gsap.ticker.remove(tick)
