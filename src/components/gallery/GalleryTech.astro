@@ -1,0 +1,879 @@
+---
+/**
+ * GalleryTech.astro — Galería "Technopunk Enterprise" (PRD-003 · full-width PRD-004 · youtube/enlaces PRD-005)
+ *
+ * Ventana de sistema autocontenida: tokens CSS locales `--gt-*`
+ * (NO tocan el design system Y2K global).
+ *
+ * UX:
+ *   - Ventana con barras de título + scanlines sutiles
+ *   - Sidebar: filtro terminal + lista de obras (mini-cards)
+ *   - Stage: previsualización del activo (eager en cover, lazy en lista)
+ *   - Lightbox full-screen accesible (focus-trap, Esc, ←/→, share)
+ *
+ * A11y (PRD §6.5):
+ *   - :focus-visible con acento HC · lightbox role="dialog" aria-modal
+ *   - aria-live en toast + línea de status · Esc devuelve el foco
+ *   - prefers-reduced-motion: sin animaciones, sin scanlines, sin autoplay
+ *
+ * Optimización (PRD §9):
+ *   - aspect-ratio en TODA media (CLS = 0)
+ *   - cover: eager + fetchpriority=high · resto: lazy + decoding=async
+ *   - lista: solo poster/thumbnail (NUNCA el video) · video solo en stage/lightbox
+ */
+
+import type { GalleryItem } from "@/data/gallery";
+
+const { items, version = "v0.5.1" } = Astro.props;
+
+const featured = items.find((i) => i.featured) ?? items[0];
+const firstId = featured?.id ?? "";
+const coverUrl = featured ? (featured.srcWebp ?? featured.src) : undefined;
+
+const site = Astro.site ? Astro.site.href.replace(/\/+$/, "") : "";
+
+/** Extrae el ID de 11 chars de una URL/ID de YouTube; "" si no parsea (PRD-005). */
+const ytId = (u: string) => {
+  const m = String(u).match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+  if (m) return m[1];
+  return /^[A-Za-z0-9_-]{11}$/.test(u) ? u : "";
+};
+const ytThumb = (item: GalleryItem) =>
+  item.poster ?? (ytId(item.src) ? `https://i.ytimg.com/vi/${ytId(item.src)}/hqdefault.jpg` : "");
+---
+
+{coverUrl && (
+  <link rel="preload" as="image" href={coverUrl} fetchpriority="high" />
+)}
+
+<section
+  id="gallery-tech"
+  class="gallery-tech relative w-full overflow-hidden bg-[var(--gt-bg)] text-[var(--gt-ink)]"
+  data-count={items.length}
+  data-items={JSON.stringify({ site, items })}
+>
+  <div class="relative z-10 px-3 py-12 sm:px-6 lg:px-8 lg:py-20 xl:px-10 2xl:px-12">
+    <div class="gt-copy max-w-3xl">
+      <!-- Eyebrow (paridad con páginas internas) -->
+      <p data-anim class="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[var(--gt-accent-1)]">
+        /// galería · arte
+      </p>
+      <h1
+        id="gallery-tech-title"
+        class="text-4xl font-bold uppercase leading-[0.95] tracking-tighter sm:text-5xl md:text-6xl"
+        style="font-family: var(--gt-font-mono);"
+      >
+        Galería
+      </h1>
+      <p data-anim class="mt-3 max-w-xl text-sm leading-relaxed text-[var(--gt-muted)]">
+        Obras, carátulas y visuales en vivo. Sistema Technopunk Enterprise — {items.length} archivos activos.
+      </p>
+    </div>
+
+    <!-- ══════════ VENTANA ══════════ -->
+    <div
+      class="gt-window relative mt-8 border border-[var(--gt-border)] bg-[var(--gt-panel)] shadow-[0_24px_80px_-24px_rgba(0,0,0,0.8)] lg:-mx-8 lg:border-x-0 xl:-mx-10 2xl:-mx-12"
+      aria-label="LLLIT.OPS — GALLERY.SYS"
+    >
+      <!-- Scanlines (decorativo, off bajo reduced-motion) -->
+      <span class="gt-scanlines" aria-hidden="true"></span>
+
+      <!-- ── Barra de título ── -->
+      <header class="flex items-center gap-3 border-b border-[var(--gt-border)] px-4 py-2.5">
+        <span class="flex shrink-0 gap-1.5" aria-hidden="true">
+          <span class="gt-dot bg-[var(--gt-alert)]"></span>
+          <span class="gt-dot bg-[var(--gt-accent-2)]"></span>
+          <span class="gt-dot bg-[var(--gt-accent-1)]"></span>
+        </span>
+        <span
+          class="min-w-0 truncate font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--gt-muted)]"
+          style="font-family: var(--gt-font-mono);"
+        >
+          LLLIT.OPS — GALLERY.SYS {version}
+        </span>
+        <span class="ml-auto hidden shrink-0 font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--gt-muted)] md:block" aria-hidden="true">
+          [ROOT:/GALLERY]
+        </span>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-[clamp(16rem,22vw,24rem)_1fr] lg:items-stretch">
+        <!-- ── SIDEBAR: filtro + lista ── -->
+        <aside class="order-2 flex min-h-0 flex-col border-b border-[var(--gt-border)] lg:order-1 lg:h-full lg:border-b-0 lg:border-r">
+          <!-- Terminal de filtro -->
+          <div class="shrink-0 border-b border-[var(--gt-border)] px-4 py-3">
+            <label
+              for="gt-filter"
+              class="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--gt-muted)]"
+              style="font-family: var(--gt-font-mono);"
+            >
+              <span class="text-[var(--gt-accent-1)]" aria-hidden="true">&gt;_</span> FILTRO //
+            </label>
+            <input
+              id="gt-filter"
+              type="search"
+              placeholder="tag · título · año"
+              autocomplete="off"
+              class="gt-input w-full border-b border-[var(--gt-border)] bg-transparent px-0 py-1.5 font-mono text-sm text-[var(--gt-accent-1)] caret-[var(--gt-accent-1)] placeholder:text-[var(--gt-muted)] focus:outline-none focus-visible:border-[var(--gt-accent-2-hc)]"
+              style="font-family: var(--gt-font-mono);"
+            />
+          </div>
+
+          <!-- Lista de obras -->
+          <ol class="gt-list max-h-[280px] divide-y divide-[var(--gt-border)] overflow-y-auto sm:max-h-[360px] lg:max-h-none lg:min-h-0 lg:flex-1" aria-label="Lista de obras">
+            {items.map((item, i) => {
+              const thumb =
+                item.kind === "video"
+                  ? item.poster
+                  : item.kind === "youtube"
+                    ? ytThumb(item)
+                    : (item.srcWebp ?? item.src);
+              return (
+                <li>
+                  <button
+                    type="button"
+                    class="gt-item group flex w-full items-center gap-3 px-4 py-2.5 text-left"
+                    data-id={item.id}
+                    aria-current={item.id === firstId ? "true" : undefined}
+                  >
+                    <span class="gt-thumb relative h-12 w-20 shrink-0 overflow-hidden border border-[var(--gt-border)] bg-[var(--gt-bg)]">
+                      <img
+                        src={thumb ?? ""}
+                        alt=""
+                        class="h-full w-full object-cover"
+                        loading={i === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        style={{ aspectRatio: item.aspect ?? "16/9" }}
+                      />
+                    </span>
+                    <span class="min-w-0 flex-1">
+                      <span class="gt-item-title block truncate text-sm font-semibold">{item.title}</span>
+                      <span class="block truncate font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--gt-muted)]" style="font-family: var(--gt-font-mono);">
+                        {String(i + 1).padStart(2, "0")} · {item.kind}
+                        {item.meta ? ` · ${item.meta}` : ""}
+                      </span>
+                    </span>
+                    <span class="gt-item-cursor font-mono text-[10px] text-[var(--gt-accent-1)]" style="font-family: var(--gt-font-mono);" aria-hidden="true">
+                      ▸
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+          <p class="gt-empty hidden shrink-0 border-t border-[var(--gt-border)] px-4 py-6 text-center font-mono text-xs text-[var(--gt-muted)]" style="font-family: var(--gt-font-mono);" role="status">
+            NO RESULTS — <button type="button" class="gt-reset underline text-[var(--gt-accent-1)]">RESET</button>
+          </p>
+          <div class="flex shrink-0 items-center justify-between border-t border-[var(--gt-border)] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--gt-muted)]" style="font-family: var(--gt-font-mono);">
+            <span><span class="gt-visible-count">{items.length}</span>/{items.length} OBRAS</span>
+            <span class="gt-mode hidden sm:inline">[SYNC]</span>
+          </div>
+        </aside>
+
+        <!-- ── STAGE: previsualización ── -->
+        <div class="order-1 flex min-w-0 flex-col lg:order-2">
+          <div
+            class="gt-stage relative flex-1 border-b border-[var(--gt-border)] bg-[var(--gt-bg)]"
+            data-active={firstId}
+          >
+            <!-- MediActual: Astro renderiza el activo inicial (cover) -->
+            {featured && (
+              <div class="gt-media-wrap absolute inset-0 mx-auto flex max-w-[72rem] items-center justify-center p-5 sm:p-8">
+                {featured.kind === "image" ? (
+                  <picture
+                    class="gt-media"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      aspectRatio: featured.aspect ?? "16/9",
+                    }}
+                  >
+                    {featured.srcWebp ? (
+                      <source srcset={featured.srcWebp} type="image/webp" />
+                    ) : null}
+                    <img
+                      src={featured.src}
+                      alt={featured.alt}
+                      style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                      loading="eager"
+                      decoding="async"
+                      fetchpriority="high"
+                    />
+                  </picture>
+                ) : featured.kind === "youtube" ? (
+                  <a
+                    class="gt-btn gt-btn--ghost"
+                    href={featured.src}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    [VER EN YOUTUBE ↗]
+                  </a>
+                ) : (
+                  <video
+                    class="gt-media h-full w-full object-contain"
+                    style={{ aspectRatio: featured.aspect ?? "16/9" }}
+                    src={featured.src}
+                    poster={featured.poster}
+                    controls
+                    preload="metadata"
+                    aria-label={featured.alt}
+                    playsinline
+                  />
+                )}
+              </div>
+            )}
+            <span
+              class="gt-stage-hint pointer-events-none absolute bottom-2 right-3 font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--gt-muted)]"
+              style="font-family: var(--gt-font-mono);"
+              aria-hidden="true"
+            >
+              [PREVIEW] CLICK → FULLSCREEN
+            </span>
+          </div>
+
+          <!-- Barra de acciones del stage -->
+          <div class="flex min-w-0 flex-wrap items-center gap-2 border-b border-[var(--gt-border)] px-4 py-3">
+            <span class="gt-line min-w-0 flex-1 truncate font-mono text-[11px] text-[var(--gt-muted)]" style="font-family: var(--gt-font-mono);" aria-live="polite">
+              <span class="text-[var(--gt-accent-1)]" aria-hidden="true">&gt;_</span>
+              <span class="gt-active-title">{featured?.title ?? "—"}</span>
+              <span class="gt-active-sep"> · </span>
+              <span class="gt-active-meta">{featured?.meta ?? ""}</span>
+            </span>
+            <button type="button" class="gt-btn gt-btn--ghost" data-action="prev" aria-label="Obra anterior">◂ PREV</button>
+            <button type="button" class="gt-btn gt-btn--ghost" data-action="next" aria-label="Obra siguiente">NEXT ▸</button>
+            <button type="button" class="gt-btn gt-btn--primary" data-action="open">[DESCUBRIR]</button>
+            <button type="button" class="gt-btn gt-btn--ghost" data-action="share">[COMPARTIR]</button>
+            <a
+              class="gt-btn gt-btn--ghost gt-link-btn"
+              href={featured?.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              hidden={!featured?.href}
+            >[{featured?.hrefLabel ?? "ABRIR"} ↗]</a>
+          </div>
+
+          <!-- Tags (chips) -->
+          <div class="gt-tags flex min-w-0 flex-wrap gap-1.5 px-4 py-3">
+            {(featured?.tags ?? []).map((t) => (
+              <span
+                class="gt-tag max-w-full truncate border border-[var(--gt-border)] bg-[var(--gt-bg)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--gt-muted)]"
+                style="font-family: var(--gt-font-mono);"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Footer de la ventana (status chips) ── -->
+      <footer class="flex flex-wrap items-center gap-2 border-t border-[var(--gt-border)] px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.15em]" style="font-family: var(--gt-font-mono);">
+        <span class="gt-chip gt-chip--ok border border-[var(--gt-accent-1)]/40 bg-[var(--gt-accent-1)]/10 text-[var(--gt-accent-1)]">
+          ● SISTEMA ESTABLE
+        </span>
+        <span class="gt-chip border border-[var(--gt-accent-2)]/40 bg-[var(--gt-accent-2)]/10 text-[var(--gt-accent-2-hc)]">
+          ARCHIVOS: <span class="gt-count">{items.length}</span>
+        </span>
+        <span class="gt-chip gt-status border border-[var(--gt-border)] text-[var(--gt-muted)]">
+          STATUS: <span class="gt-status-text text-[var(--gt-accent-1)]">OK</span>
+        </span>
+        <span class="ml-auto hidden text-[var(--gt-muted)] sm:inline">
+          NODE: LLLIT // CHILE
+        </span>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ══════════ LIGHTBOX (dialog) ══════════ -->
+  <div
+    id="gt-lightbox"
+    class="gt-lightbox fixed inset-0 z-[10000] hidden items-center justify-center bg-[rgba(9,12,16,0.94)] p-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Vista ampliada de la obra"
+  >
+    <span class="gt-scanlines" aria-hidden="true"></span>
+    <div class="gt-lightbox-window relative flex h-full max-h-full w-full max-w-5xl flex-col border border-[var(--gt-border)] bg-[var(--gt-panel)] lg:max-w-6xl 2xl:max-w-7xl">
+      <header class="flex items-center gap-3 border-b border-[var(--gt-border)] px-4 py-2.5">
+        <span class="flex gap-1.5" aria-hidden="true">
+          <span class="gt-dot bg-[var(--gt-alert)]"></span>
+          <span class="gt-dot bg-[var(--gt-accent-2)]"></span>
+          <span class="gt-dot bg-[var(--gt-accent-1)]"></span>
+        </span>
+        <span class="truncate font-mono text-[11px] uppercase tracking-[0.2em] text-[var(--gt-muted)]" style="font-family: var(--gt-font-mono);" id="gt-lightbox-title">
+          —
+        </span>
+        <button
+          type="button"
+          class="gt-btn gt-btn--ghost ml-auto"
+          data-action="close"
+          aria-label="Cerrar vista completa (Esc)"
+        >
+          [X]
+        </button>
+      </header>
+      <div class="gt-lightbox-stage relative flex min-h-[240px] flex-1 items-center justify-center bg-[var(--gt-bg)] p-4 sm:min-h-[320px] sm:p-8" data-lb="stage">
+        <!-- MediActual inyectado por JS (imágen/video) -->
+      </div>
+      <footer class="flex items-center gap-2 border-t border-[var(--gt-border)] px-4 py-2.5">
+        <button type="button" class="gt-btn gt-btn--ghost" data-action="prev" aria-label="Obra anterior (←)">◂</button>
+        <button type="button" class="gt-btn gt-btn--ghost" data-action="next" aria-label="Obra siguiente (→)">▸</button>
+        <span class="gt-lightbox-index mx-auto font-mono text-[11px] text-[var(--gt-muted)]" style="font-family: var(--gt-font-mono);" aria-live="polite">
+          1 / {items.length}
+        </span>
+        <button type="button" class="gt-btn gt-btn--ghost" data-action="share">[COMPARTIR]</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Toast (aria-live) -->
+  <p id="gt-toast" class="gt-toast fixed bottom-6 left-1/2 z-[10001] -translate-x-1/2 border border-[var(--gt-accent-1)] bg-[var(--gt-panel)] px-4 py-2 font-mono text-xs text-[var(--gt-accent-1)]" style="font-family: var(--gt-font-mono);" role="status" aria-live="polite" hidden>
+    —
+  </p>
+</section>
+
+<style is:global>
+  /* ─────────────────────────────────────────────────────────────
+     TOKENS LOCALES — Technopunk Enterprise (PRD-003 §6.1)
+     Namespaced a .gallery-tech: NO colisiona con el tema Y2K global.
+     is:global: el runtime JS inyecta nodos sin hash de scoping Astro.
+     ───────────────────────────────────────────────────────────── */
+  .gallery-tech {
+    --gt-bg: #090c10;          /* Deep Terminal Black        */
+    --gt-panel: #161b22;       /* Window Charcoal            */
+    --gt-border: #30363d;      /* Metal Frame Gray           */
+    --gt-ink: #f0f6fc;         /* High-Contrast White        */
+    --gt-muted: #8b949e;       /* Code Muted Gray            */
+    --gt-accent-1: #00ff66;    /* Terminal Hack Green        */
+    --gt-accent-2: #a855f7;    /* Hologram Violet         */
+    --gt-accent-2-hc: #b14bff; /* Violet High-Contrast    */
+    --gt-alert: #ff3366;       /* Fault Red               */
+    --gt-font-mono: "JetBrains Mono", "Fira Code", "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  .gallery-tech ::selection {
+    background: var(--gt-accent-1);
+    color: var(--gt-bg);
+  }
+
+  .gallery-tech :focus-visible {
+    outline: 2px solid var(--gt-accent-2-hc);
+    outline-offset: 2px;
+  }
+
+  /* Dots de titlebar */
+  .gallery-tech .gt-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  /* Scanlines (decorativa; off bajo reduced-motion) */
+  .gallery-tech .gt-scanlines {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.55;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(240, 246, 252, 0.03) 0px,
+      rgba(240, 246, 252, 0.03) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+  .gallery-tech .gt-window {
+    overflow: hidden;
+  }
+
+  /* Stage: altura fluida (PRD-004 §5 D3) — svh evita el salto del URL-bar */
+  .gallery-tech .gt-stage {
+    min-height: 320px; /* fallback SSR / navegadores sin svh */
+  }
+  @supports (min-height: 50svh) {
+    .gallery-tech .gt-stage {
+      min-height: clamp(320px, 50svh, 640px);
+    }
+  }
+
+  /* Lista de obras */
+  .gallery-tech .gt-item {
+    border-left: 2px solid transparent;
+    color: var(--gt-ink);
+    background: transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .gallery-tech .gt-item:hover {
+    background: rgba(0, 255, 102, 0.06);
+  }
+  .gallery-tech .gt-item .gt-item-cursor {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .gallery-tech .gt-item:hover .gt-item-cursor,
+  .gallery-tech .gt-item:focus-visible .gt-item-cursor {
+    opacity: 1;
+  }
+  .gallery-tech .gt-item[aria-current="true"] {
+    background: rgba(0, 255, 102, 0.09);
+    border-left-color: var(--gt-accent-1);
+  }
+  .gallery-tech .gt-item[aria-current="true"] .gt-item-title {
+    color: var(--gt-accent-1);
+  }
+
+  /* Scrollbar terminal */
+  .gallery-tech .gt-list {
+    scrollbar-width: thin;
+    scrollbar-color: var(--gt-border) transparent;
+  }
+  .gallery-tech .gt-list::-webkit-scrollbar {
+    width: 6px;
+  }
+  .gallery-tech .gt-list::-webkit-scrollbar-thumb {
+    background: var(--gt-border);
+  }
+  .gallery-tech .gt-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Botones */
+  .gallery-tech .gt-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border: 1px solid var(--gt-border);
+    background: transparent;
+    color: var(--gt-ink);
+    font-family: var(--gt-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  }
+  .gallery-tech .gt-btn:active {
+    transform: translateY(1px);
+  }
+  .gallery-tech .gt-btn--ghost {
+    color: var(--gt-muted);
+  }
+  .gallery-tech .gt-btn--ghost:hover {
+    color: var(--gt-accent-1);
+    border-color: var(--gt-accent-1);
+  }
+  .gallery-tech .gt-btn--primary {
+    color: var(--gt-accent-1);
+    border-color: var(--gt-accent-1);
+    background: rgba(0, 255, 102, 0.1);
+  }
+  .gallery-tech .gt-btn--primary:hover {
+    background: rgba(0, 255, 102, 0.22);
+    box-shadow: 0 0 18px rgba(0, 255, 102, 0.3);
+  }
+
+  /* Touch targets ≥44px (PRD-004 §5 D6 — guía HIG); no afecta desktop con mouse */
+  @media (pointer: coarse) {
+    .gallery-tech .gt-btn {
+      padding: 0.75rem 1rem;
+      min-height: 44px;
+    }
+  }
+
+  /* Chips de tags */
+  .gallery-tech .gt-tag {
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .gallery-tech .gt-tag:hover {
+    color: var(--gt-accent-1);
+    border-color: var(--gt-accent-1);
+  }
+
+  /* Media */
+  .gallery-tech .gt-media {
+    display: block;
+  }
+  .gallery-tech video.gt-media {
+    background: #000;
+  }
+
+  /* YouTube facade (PRD-005) */
+  .gallery-tech .gt-yt {
+    position: relative;
+    display: block;
+    padding: 0;
+    border: 1px solid var(--gt-border);
+    background: #000;
+    cursor: pointer;
+  }
+  .gallery-tech .gt-yt-play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1;
+    color: var(--gt-accent-1);
+    text-shadow: 0 0 24px rgba(0, 255, 102, 0.65);
+    transition: transform 0.15s ease;
+  }
+  .gallery-tech .gt-yt:hover .gt-yt-play,
+  .gallery-tech .gt-yt:focus-visible .gt-yt-play {
+    transform: scale(1.08);
+  }
+  .gallery-tech .gt-yt iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  /* [hidden] debe ganarle a .gt-btn { display: inline-flex } (PRD-005) */
+  .gallery-tech .gt-btn[hidden] {
+    display: none;
+  }
+
+  /* Lightbox */
+  .gallery-tech .gt-lightbox-window {
+    z-index: 1;
+    box-shadow: 0 48px 140px -40px rgba(0, 0, 0, 0.95);
+  }
+
+  /* Movimiento sutil (solo si el usuario lo permite) */
+  @media (prefers-reduced-motion: no-preference) {
+    .gallery-tech .gt-scanlines {
+      animation: gt-scan 9s linear infinite;
+    }
+    .gallery-tech .gt-item[aria-current="true"] .gt-item-cursor {
+      animation: gt-blink 1.1s steps(2, start) infinite;
+    }
+  }
+  @keyframes gt-scan {
+    from { background-position: 0 0; }
+    to { background-position: 0 60px; }
+  }
+  @keyframes gt-blink {
+    50% { opacity: 0; }
+  }
+
+  /* Reduced motion: sin textura, sin micro-transiciones */
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-tech .gt-scanlines {
+      display: none;
+    }
+    .gallery-tech .gt-item,
+    .gallery-tech .gt-btn,
+    .gallery-tech .gt-tag,
+    .gallery-tech .gt-yt-play {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from "gsap";
+
+  /**
+   * GALLERY.SYS — runtime de la ventana Technopunk (PRD-003 §8–9).
+   * Vanilla JS; datos vía data-items (JSON del frontmatter).
+   */
+  const root = document.getElementById("gallery-tech");
+
+  if (root) {
+    const payload = JSON.parse(root.dataset.items || "{}");
+    const items = payload.items ?? [];
+    const site = payload.site ?? "";
+    const esc = (s) =>
+      String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    const ytId = (u) => {
+      const m = String(u).match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+      if (m) return m[1];
+      return /^[A-Za-z0-9_-]{11}$/.test(String(u)) ? String(u) : "";
+    };
+
+    const lb = document.getElementById("gt-lightbox");
+    const lbTitle = document.getElementById("gt-lightbox-title");
+    const lbIndex = root.querySelector(".gt-lightbox-index");
+    const lbStage = lb ? lb.querySelector('[data-lb="stage"]') : null;
+    const stage = root.querySelector(".gt-stage");
+    const tagsEl = root.querySelector(".gt-tags");
+    const titleEl = root.querySelector(".gt-active-title");
+    const metaEl = root.querySelector(".gt-active-meta");
+    const statusEl = root.querySelector(".gt-status-text");
+    const visibleCount = root.querySelector(".gt-visible-count");
+    const emptyEl = root.querySelector(".gt-empty");
+    const filter = document.getElementById("gt-filter");
+    const resetBtn = root.querySelector(".gt-reset");
+    const toast = document.getElementById("gt-toast");
+    const listBtns = Array.from(root.querySelectorAll(".gt-item"));
+    const linkBtn = root.querySelector(".gt-link-btn");
+
+    let activeIndex = listBtns.findIndex((b) => b.getAttribute("aria-current") === "true");
+    if (activeIndex < 0) activeIndex = 0;
+    let lastFocused = null;
+    let toastTimer = 0;
+
+    /* ── Media rendering (stage + lightbox) ── */
+    function mediaHTML(item, ctx) {
+      const ar = `aspect-ratio:${item.aspect ?? "16/9"};`;
+      // Videos: sizing propio (fit). Imágenes/YouTube: "caja" explícita en el
+      // wrapper — evita el colapso circular picture→img que desbordaba (v0.5.1).
+      const fit =
+        ctx === "stage"
+          ? "width:100%;height:100%;object-fit:contain;"
+          : "max-width:100%;max-height:75vh;max-height:min(75dvh, calc(100dvh - 14rem));object-fit:contain;";
+      const box =
+        ctx === "stage"
+          ? "width:100%;height:100%;"
+          : "width:100%;height:100%;max-height:min(75dvh, calc(100dvh - 14rem));";
+      if (item.kind === "video") {
+        const poster = item.poster ? ` poster="${esc(item.poster)}"` : "";
+        return `<video class="gt-media" src="${esc(item.src)}"${poster} controls preload="metadata" playsinline aria-label="${esc(item.alt)}" style="${fit}${ar}"></video>`;
+      }
+      if (item.kind === "youtube") {
+        const id = ytId(item.src);
+        if (!id) {
+          return `<a class="gt-btn gt-btn--ghost" href="${esc(item.src)}" target="_blank" rel="noopener noreferrer">[VER EN YOUTUBE ↗]</a>`;
+        }
+        const thumb = esc(item.poster ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`);
+        return `<button type="button" class="gt-yt gt-media" data-yt="${id}" aria-label="Reproducir video: ${esc(item.alt)}" style="${box}${ar}"><img src="${thumb}" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;" /><span class="gt-yt-play" aria-hidden="true">▶</span></button>`;
+      }
+      const webp = item.srcWebp ? `<source srcset="${esc(item.srcWebp)}" type="image/webp" />` : "";
+      return `<picture class="gt-media" style="${box}${ar}">${webp}<img src="${esc(item.src)}" alt="${esc(item.alt)}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:contain;" /></picture>`;
+    }
+
+    /* ── YouTube: facade click-to-play (PRD-005) ── */
+    function playYT(btn) {
+      const id = btn.dataset.yt;
+      if (!id) return;
+      const item = items[activeIndex];
+      const label = esc(item ? item.alt : "Video YouTube");
+      btn.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="${label}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+    }
+
+    /* ── Toast (aria-live) ── */
+    function showToast(msg, ms) {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.hidden = true;
+      }, ms ?? 2500);
+    }
+
+    /* ── Lightbox: render, abrir, cerrar, teclas ── */
+    function renderLightbox() {
+      const item = items[activeIndex];
+      if (!item) return;
+      if (lbStage) lbStage.innerHTML = mediaHTML(item, "lightbox");
+      if (lbTitle) lbTitle.textContent = `${item.title}${item.meta ? ` · ${item.meta}` : ""}`;
+      if (lbIndex) lbIndex.textContent = `${activeIndex + 1} / ${items.length}`;
+    }
+    function openLightbox() {
+      if (!lb) return;
+      lastFocused = document.activeElement;
+      // PRD-005: detén un YouTube en reproducción del stage (evita doble audio)
+      const stageYt = stage?.querySelector(".gt-yt iframe");
+      if (stageYt && stage) {
+        const wrap = stage.querySelector(".gt-media-wrap") ?? stage;
+        wrap.innerHTML = mediaHTML(items[activeIndex], "stage");
+      }
+      renderLightbox();
+      lb.classList.remove("hidden");
+      lb.classList.add("flex");
+      document.body.style.overflow = "hidden";
+      document.addEventListener("keydown", onLbKey);
+      lb.querySelector('[data-action="close"]')?.focus();
+    }
+    function closeLightbox() {
+      if (!lb) return;
+      lb.classList.remove("flex");
+      lb.classList.add("hidden");
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", onLbKey);
+      if (lbStage) {
+        const video = lbStage.querySelector("video");
+        if (video && !video.paused) video.pause();
+        lbStage.innerHTML = ""; // PRD-005: también detiene iframes de YouTube
+      }
+      if (lastFocused instanceof HTMLElement) lastFocused.focus();
+      lastFocused = null;
+    }
+    function onLbKey(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeLightbox();
+      } else if (e.key === "ArrowRight") {
+        step(1);
+      } else if (e.key === "ArrowLeft") {
+        step(-1);
+      } else if (e.key === "Tab") {
+        const f = Array.from(lb.querySelectorAll('button, [href], input, video, [tabindex]:not([tabindex="-1"])'));
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    /* ── Selección + stage ── */
+    function setActive(index) {
+      const item = items[index];
+      if (!item) return;
+      activeIndex = index;
+      listBtns.forEach((b, i) => {
+        if (i === index) b.setAttribute("aria-current", "true");
+        else b.removeAttribute("aria-current");
+      });
+      listBtns[index]?.scrollIntoView({ block: "nearest" });
+      if (stage) {
+        const wrap = stage.querySelector(".gt-media-wrap") ?? stage;
+        wrap.innerHTML = mediaHTML(item, "stage");
+        stage.dataset.active = item.id;
+      }
+      if (titleEl) titleEl.textContent = item.title;
+      if (metaEl) metaEl.textContent = item.meta ?? "";
+      if (tagsEl) {
+        tagsEl.textContent = "";
+        for (const t of item.tags ?? []) {
+          const s = document.createElement("span");
+          s.className =
+            "gt-tag max-w-full truncate border border-[var(--gt-border)] bg-[var(--gt-bg)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] text-[var(--gt-muted)]";
+          s.style.fontFamily = "var(--gt-font-mono)";
+          s.textContent = t;
+          tagsEl.appendChild(s);
+        }
+      }
+      if (statusEl) {
+        const warn = item.kind === "video" && !item.poster;
+        statusEl.textContent = warn ? "WARN" : "OK";
+        statusEl.style.color = warn ? "var(--gt-alert)" : "var(--gt-accent-1)";
+      }
+      if (linkBtn) {
+        if (item.href) {
+          linkBtn.href = item.href;
+          linkBtn.textContent = `[${item.hrefLabel ?? "ABRIR"} ↗]`;
+          linkBtn.hidden = false;
+        } else {
+          linkBtn.removeAttribute("href");
+          linkBtn.hidden = true;
+        }
+      }
+      if (lb && !lb.classList.contains("hidden")) renderLightbox();
+    }
+
+    function step(dir) {
+      const n = items.length;
+      if (n > 1) setActive((activeIndex + dir + n) % n);
+    }
+
+    /* ── Filtro terminal ── */
+    function applyFilter() {
+      const q = (filter?.value ?? "").trim().toLowerCase();
+      let visible = 0;
+      listBtns.forEach((b, i) => {
+        const item = items[i];
+        const hay = [item.title, item.meta, ...(item.tags ?? [])].filter(Boolean).join(" ").toLowerCase();
+        const show = !q || hay.includes(q);
+        b.closest("li")?.classList.toggle("hidden", !show);
+        if (show) visible += 1;
+      });
+      if (visibleCount) visibleCount.textContent = String(visible);
+      if (emptyEl) emptyEl.classList.toggle("hidden", visible > 0);
+    }
+
+    /* ── Share: Web Share → clipboard → toast ── */
+    async function shareCurrent() {
+      const item = items[activeIndex];
+      if (!item) return;
+      const url = `${site}/gallery#${encodeURIComponent(item.id)}`;
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: `LLLIT — ${item.title}`, text: item.title, url });
+        } else {
+          await navigator.clipboard.writeText(url);
+          showToast("LINK COPIADO AL PORTAPAPELES");
+        }
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+        try {
+          await navigator.clipboard.writeText(url);
+          showToast("LINK COPIADO AL PORTAPAPELES");
+        } catch {
+          showToast("NO SE PUDO COPIAR EL LINK", 4000);
+        }
+      }
+    }
+
+    /* ── Delegación de eventos ── */
+    root.addEventListener("click", (e) => {
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      const actionEl = t.closest("[data-action]");
+      if (actionEl) {
+        const action = actionEl.dataset.action;
+        if (action === "prev") step(-1);
+        else if (action === "next") step(1);
+        else if (action === "open") openLightbox();
+        else if (action === "close") closeLightbox();
+        else if (action === "share") void shareCurrent();
+        return;
+      }
+      const ytBtn = t.closest(".gt-yt");
+      if (ytBtn) {
+        playYT(ytBtn);
+        return;
+      }
+      const itemBtn = t.closest(".gt-item");
+      if (itemBtn) {
+        const idx = listBtns.indexOf(itemBtn);
+        if (idx >= 0) setActive(idx);
+        return;
+      }
+      if (t === lb) closeLightbox();
+      else if (t.closest(".gt-stage") && !t.closest("video") && !t.closest(".gt-yt") && !t.closest("iframe")) openLightbox();
+    });
+
+    filter?.addEventListener("input", applyFilter);
+    resetBtn?.addEventListener("click", () => {
+      if (filter) filter.value = "";
+      applyFilter();
+      filter?.focus();
+    });
+
+    /* ── Init ── */
+    setActive(activeIndex);
+    applyFilter();
+
+    /* ── Entrada GSAP (solo con motion permitido) ── */
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.from(root.querySelectorAll("[data-anim]"), {
+        y: 14,
+        autoAlpha: 0,
+        duration: 0.5,
+        stagger: 0.08,
+        ease: "power2.out",
+      });
+      const win = root.querySelector(".gt-window");
+      if (win) gsap.from(win, { y: 24, autoAlpha: 0, duration: 0.6, delay: 0.15, ease: "power3.out" });
+      gsap.from(listBtns, { x: -10, autoAlpha: 0, duration: 0.35, stagger: 0.03, delay: 0.3, ease: "power2.out" });
+    });
+  }
+</script>

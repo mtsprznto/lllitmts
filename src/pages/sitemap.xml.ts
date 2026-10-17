@@ -10,6 +10,7 @@ export const GET: APIRoute = async () => {
     { loc: "/formulario", priority: "0.6", changefreq: "monthly" },
     { loc: "/prices", priority: "0.7", changefreq: "monthly" },
     { loc: "/redeem", priority: "0.5", changefreq: "monthly" },
+    { loc: "/gallery", priority: "0.7", changefreq: "monthly" },
   ]
 
   const albumPages = albums.map((a) => ({

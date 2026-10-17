@@ -17,6 +17,12 @@ LLLIT is a Chilean electronic music producer and visual artist. Creates minimal 
   - Artwork by Camila Bravo
   - Voices: Camila Bravo + Ignacia
 
+## Gallery
+
+- Visual works: https://lllitmts.vercel.app/gallery
+  - Album artwork, generative visuals, identity marks and live mapping video
+  - Built on the "Technopunk Enterprise" visual system
+
 ## Services
 
 - Mapping visual en vivo: https://lllitmts.vercel.app/prices
@@ -48,3 +54,6 @@ September 4, 2026 on Bandcamp.
 
 ### What software does LLLIT use for visuals?
 TouchDesigner for projection mapping and generative visuals.
+
+### Does LLLIT have an image gallery?
+Yes: https://lllitmts.vercel.app/gallery — album artwork, generative visuals, identity marks and live mapping video.

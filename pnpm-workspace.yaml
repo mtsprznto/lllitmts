@@ -5,7 +5,14 @@ minimumReleaseAgeExclude:
 # pnpm 11+ reads settings ONLY from pnpm-workspace.yaml
 # (the "pnpm" field in package.json is ignored since pnpm 11).
 # See https://pnpm.io/settings
-#
+
+# Windows: layout hoisted (sin symlinks/junctions en node_modules). El adapter
+# @astrojs/vercel replica el layout de pnpm en .vercel/output/functions/*_render.func
+# con fs.symlink(), y en Windows ese API exige privilegio (EPERM sin Developer Mode).
+# Con hoisted no hay reparse points -> el adapter copia en vez de enlazar (PRD_006).
+# Tras cambiarlo, reinstalar UNA vez desde Windows: Remove-Item -Recurse -Force node_modules; pnpm install
+nodeLinker: hoisted
+
 # ⚠️ js-yaml: keep it below 5.x. js-yaml 5 is an ESM rewrite with named
 # exports only (NO default export), and astro 7 does `import yaml from "js-yaml"`.
 # The previous `>=4.3.1` (no upper bound) resolved to 5.2.3 and broke `astro dev`

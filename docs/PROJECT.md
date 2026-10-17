@@ -61,6 +61,16 @@ Detalle operativo que vive fuera de `AGENTS.md` (ese es solo un índice).
 - `.env` contiene API keys productivas — no commitees ni expongas este archivo
 - Validación doble (cliente + servidor) en formulario de contacto
 
+## Build (Windows)
+
+- `node_modules` se instala con layout **hoisted** (`nodeLinker: hoisted` en `pnpm-workspace.yaml`).
+  El adapter `@astrojs/vercel` replica el layout de pnpm dentro de `.vercel/output/functions/*_render.func`
+  con `fs.symlink()`; en Windows ese API exige Developer Mode/admin y con el layout aislado
+  (junctions de `.pnpm/`) el build falla con `EPERM`. Con hoisted el adapter copia, no enlaza.
+- Tras cambiar `nodeLinker`, reinstalar una vez desde Windows: `Remove-Item -Recurse -Force node_modules; pnpm install`.
+- Verificar: `node_modules/.modules.yaml` → `"nodeLinker": "hoisted"` → `pnpm build`.
+- Detalle y evidencia: `docs/PRD_006_.md`.
+
 ## Tests
 
 - Directorio: `tests/` (runner nativo de Node: `node --test`)
